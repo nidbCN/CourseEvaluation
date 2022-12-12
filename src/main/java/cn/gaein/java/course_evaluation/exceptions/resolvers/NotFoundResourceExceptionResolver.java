@@ -17,7 +17,7 @@ public class NotFoundResourceExceptionResolver {
     @ExceptionHandler(NoHandlerFoundException.class)
     public Response handleNotFoundResourceException(HttpServletRequest request,
                                                     NoHandlerFoundException e) {
-        Response response = Response.notFound();
+        var response = Response.notFound();
         response.setMessage("Requested resource wasn't found on the server");
         response.setData(e.getMessage());
         return response;

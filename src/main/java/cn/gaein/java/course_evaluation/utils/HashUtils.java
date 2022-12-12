@@ -9,13 +9,13 @@ public class HashUtils {
 
     public static String md5(String str) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            var md = MessageDigest.getInstance("MD5");
             md.update(str.getBytes());
             byte b[] = md.digest();
             int i;
             StringBuffer buf = new StringBuffer("");
-            for (int offset = 0; offset < b.length; offset++) {
-                i = b[offset];
+            for (byte value : b) {
+                i = value;
                 if (i < 0)
                     i += 256;
                 if (i < 16)

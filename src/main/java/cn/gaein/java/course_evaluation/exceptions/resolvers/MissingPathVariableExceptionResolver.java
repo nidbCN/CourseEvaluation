@@ -17,7 +17,7 @@ public class MissingPathVariableExceptionResolver {
     @ExceptionHandler(MissingPathVariableException.class)
     public Response handleMissingPathVariableException(HttpServletRequest request,
                                                        MissingPathVariableException e) {
-        Response response = Response.badRequest();
+        var response = Response.badRequest();
         response.setMessage("Required path variable is missing in this request.");
         response.setData(e.getMessage());
         return response;
