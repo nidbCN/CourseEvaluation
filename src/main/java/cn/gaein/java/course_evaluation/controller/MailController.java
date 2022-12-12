@@ -31,15 +31,18 @@ public class MailController {
 
     @PostMapping("")
     public Response sendMail(HttpSession session, @RequestBody MailParam param) {
-        String to = param.getReceive();
-        String verifyCode = VerifyCodeUtil.generateVerifyCode(6);
+        var recipient = param.getRecipient();
+        var verifyCode = VerifyCodeUtil.generateVerifyCode(6);
+
         session.setAttribute("verifyCode", verifyCode);
-        String mailText = String.format(MAIL_TEXT_TEMPLATE, verifyCode);
+        var mailText = String.format(MAIL_TEXT_TEMPLATE, verifyCode);
+
         try {
-            emailService.sendSimpleMessage(to, MAIL_SUBJECT, mailText);
+            emailService.sendSimpleMessage(recipient, MAIL_SUBJECT, mailText);
         } catch (MailException e) {
             return Response.internalServerError(e.getMessage());
         }
+
         return Response.success("Mail sent");
     }
 }

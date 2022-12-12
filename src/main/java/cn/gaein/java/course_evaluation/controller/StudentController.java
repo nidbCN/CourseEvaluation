@@ -2,6 +2,7 @@ package cn.gaein.java.course_evaluation.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpSession;
 
@@ -40,15 +41,12 @@ public class StudentController {
 
     @GetMapping("")
     public Response getAllStudent() {
-        Iterable<Student> students = repository.findAll();
-        List<StudentDto> dtos = new ArrayList<>();
-        for (Student student : students) {
-            dtos.add(new StudentDto(student));
-        }
-        if (dtos.isEmpty()) {
-            return studentNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var students = repository.findAll();
+
+        return Response.success(
+            StreamSupport.stream(students.spliterator(), false)
+                .map(StudentDto::new)
+        );
     }
 
     @PostMapping("")
@@ -57,8 +55,9 @@ public class StudentController {
         if (repository.findByIdNumber(param.getIdNumber()) != null) {
             return studentIdNumberExistResponse;
         }
+
         // save student
-        Student student = new Student();
+        var student = new Student();
         student.setIdNumber(param.getIdNumber());
         student.setName(param.getName());
         student.setPhone(param.getPhone());
@@ -66,30 +65,32 @@ public class StudentController {
         student.setEmail(param.getEmail());
         student.setPassword(HashUtils.md5(param.getPassword()));
         student.setAge(param.getAge());
+
         repository.save(student);
         return Response.success(new StudentDto(student));
     }
 
     @GetMapping("/{id}")
     public Response getStudentById(@PathVariable("id") long id) {
-        Student student = repository.findById(id);
-        if (student == null) {
-            return studentNotFoundResponse;
-        }
-        return Response.success(new StudentDto(student));
+        var student = repository.findById(id);
+
+        return student == null
+            ? studentNotFoundResponse
+            : Response.success(new StudentDto(student));
     }
 
     @PutMapping("/{id}")
     public Response updateStudent(@PathVariable("id") long id, @RequestBody StudentParam param) {
-        Student student = repository.findById(id);
+        var student = repository.findById(id);
         if (student == null) {
             return studentNotFoundResponse;
         }
         // check if idNumber exist
         if (repository.findByIdNumber(param.getIdNumber()) != null
-                && !student.getIdNumber().equals(param.getIdNumber())) {
+            && !student.getIdNumber().equals(param.getIdNumber())) {
             return studentIdNumberExistResponse;
         }
+
         // update student
         student.setIdNumber(param.getIdNumber());
         student.setName(param.getName());
@@ -98,58 +99,64 @@ public class StudentController {
         student.setEmail(param.getEmail());
         student.setPassword(HashUtils.md5(param.getPassword()));
         student.setAge(param.getAge());
+
         repository.save(student);
         return Response.success(new StudentDto(student));
     }
 
     @DeleteMapping("/{id}")
     public Response deleteStudent(@PathVariable("id") long id) {
-        Student student = repository.findById(id);
+        var student = repository.findById(id);
+
         if (student == null) {
             return studentNotFoundResponse;
         }
+
         repository.delete(student);
         return Response.success();
     }
 
     @GetMapping("/search")
     public Response searchStudentByName(@RequestParam String name) {
-        Iterable<Student> students = repository.findByName(name);
-        List<StudentDto> dtos = new ArrayList<>();
-        for (Student student : students) {
-            dtos.add(new StudentDto(student));
-        }
-        if (dtos.isEmpty()) {
-            return studentNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var students = repository.findByName(name);
+
+        return Response.success(
+            StreamSupport.stream(students.spliterator(), false)
+                .map(StudentDto::new)
+        );
     }
 
     @GetMapping("login")
     public Response login(@RequestParam String idNumber, @RequestParam String password) {
-        Student student = repository.findByIdNumber(idNumber);
+        var student = repository.findByIdNumber(idNumber);
+
         if (student == null) {
             return studentNotFoundResponse;
         }
+
         if (!student.getPassword().equals(HashUtils.md5(password))) {
             return Response.badRequest("Password is incorrect");
         }
+
         return Response.success(new StudentDto(student));
     }
 
     @PostMapping("/register")
     public Response registerStudent(HttpSession session, @RequestBody StudentRegisterParam param) {
         // check verify code
-        String verifyCode = (String) session.getAttribute("verifyCode");
+        var verifyCode = (String) session.getAttribute("verifyCode");
+
         if (verifyCode == null || !verifyCode.equals(param.getVerifyCode())) {
             return Response.badRequest("Verify code is not correct");
         }
         // check if idNumber exist
+
         if (repository.findByIdNumber(param.getIdNumber()) != null) {
             return studentIdNumberExistResponse;
         }
+
         // save student
-        Student student = new Student();
+        var student = new Student();
         student.setIdNumber(param.getIdNumber());
         student.setName(param.getName());
         student.setPhone(param.getPhone());
@@ -157,6 +164,7 @@ public class StudentController {
         student.setEmail(param.getEmail());
         student.setPassword(HashUtils.md5(param.getPassword()));
         student.setAge(param.getAge());
+
         repository.save(student);
         return Response.success(new StudentDto(student));
     }

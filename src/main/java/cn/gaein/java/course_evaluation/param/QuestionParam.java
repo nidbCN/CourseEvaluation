@@ -1,9 +1,12 @@
 package cn.gaein.java.course_evaluation.param;
 
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class QuestionParam {
     private String content;
-    private Integer score;
-    private Long evaluationId;
+    private int score;
+    private long evaluationId;
 
     public String getContent() {
         return this.content;
@@ -13,19 +16,19 @@ public class QuestionParam {
         this.content = content;
     }
 
-    public Integer getScore() {
+    public int getScore() {
         return this.score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
-    public Long getEvaluationId() {
+    public long getEvaluationId() {
         return this.evaluationId;
     }
 
-    public void setEvaluationId(Long evaluationId) {
+    public void setEvaluationId(long evaluationId) {
         this.evaluationId = evaluationId;
     }
 }

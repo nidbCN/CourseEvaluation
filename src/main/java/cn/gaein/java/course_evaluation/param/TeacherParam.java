@@ -1,5 +1,8 @@
 package cn.gaein.java.course_evaluation.param;
 
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class TeacherParam {
     private String idNumber;
     private String name;
@@ -39,11 +42,11 @@ public class TeacherParam {
         this.sex = sex;
     }
 
-    public Integer getAge() {
+    public int getAge() {
         return this.age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(int age) {
         this.age = age;
     }
 }

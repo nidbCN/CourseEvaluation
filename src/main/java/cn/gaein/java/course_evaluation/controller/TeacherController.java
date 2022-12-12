@@ -2,6 +2,7 @@ package cn.gaein.java.course_evaluation.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import cn.gaein.java.course_evaluation.dto.TeacherDto;
 import cn.gaein.java.course_evaluation.entity.Teacher;
@@ -35,15 +36,12 @@ public class TeacherController {
 
     @GetMapping("")
     public Response getAllTeacher() {
-        Iterable<Teacher> teachers = repository.findAll();
-        List<TeacherDto> dtos = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            dtos.add(new TeacherDto(teacher));
-        }
-        if (dtos.isEmpty()) {
-            return teacherNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var teachers = repository.findAll();
+
+        return Response.success(
+            StreamSupport.stream(teachers.spliterator(), false)
+                .map(TeacherDto::new)
+        );
     }
 
     @PostMapping("")
@@ -52,67 +50,71 @@ public class TeacherController {
         if (repository.findByIdNumber(param.getIdNumber()) != null) {
             return teacherIdNumberExistResponse;
         }
+
         // save teacher
-        Teacher teacher = new Teacher();
+        var teacher = new Teacher();
         teacher.setIdNumber(param.getIdNumber());
         teacher.setName(param.getName());
         teacher.setPhone(param.getPhone());
         teacher.setSex(param.getSex());
         teacher.setAge(param.getAge());
+
         repository.save(teacher);
         return Response.success(new TeacherDto(teacher));
     }
 
     @GetMapping("/{id}")
     public Response getTeacherById(@PathVariable("id") long id) {
-        Teacher teacher = repository.findById(id);
-        if (teacher == null) {
-            return teacherNotFoundResponse;
-        }
-        return Response.success(new TeacherDto(teacher));
+        var teacher = repository.findById(id);
+
+        return teacher == null
+            ? teacherNotFoundResponse
+            : Response.success(new TeacherDto(teacher));
     }
 
     @PostMapping("/{id}")
     public Response updateTeacher(@PathVariable("id") long id, @RequestBody TeacherParam param) {
-        Teacher teacher = repository.findById(id);
+        var teacher = repository.findById(id);
         if (teacher == null) {
             return teacherNotFoundResponse;
         }
+
         // check if idNumber exist
         if (repository.findByIdNumber(param.getIdNumber()) != null
-                && !teacher.getIdNumber().equals(param.getIdNumber())) {
+            && !teacher.getIdNumber().equals(param.getIdNumber())) {
             return teacherIdNumberExistResponse;
         }
+
         // update teacher
         teacher.setIdNumber(param.getIdNumber());
         teacher.setName(param.getName());
         teacher.setPhone(param.getPhone());
         teacher.setSex(param.getSex());
         teacher.setAge(param.getAge());
+
         repository.save(teacher);
         return Response.success(new TeacherDto(teacher));
     }
 
     @DeleteMapping("/{id}")
     public Response deleteTeacher(@PathVariable("id") long id) {
-        Teacher teacher = repository.findById(id);
+        var teacher = repository.findById(id);
+
         if (teacher == null) {
             return teacherNotFoundResponse;
         }
+
         repository.delete(teacher);
         return Response.success();
     }
 
     @GetMapping("/search")
     public Response searchTeacherByName(@RequestParam String name) {
-        Iterable<Teacher> teachers = repository.findByName(name);
-        List<TeacherDto> dtos = new ArrayList<>();
-        for (Teacher teacher : teachers) {
-            dtos.add(new TeacherDto(teacher));
-        }
-        if (dtos.isEmpty()) {
-            return teacherNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var teachers = repository.findByName(name);
+
+        return Response.success(
+            StreamSupport.stream(teachers.spliterator(), false)
+                .map(TeacherDto::new)
+        );
     }
 }

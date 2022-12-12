@@ -2,6 +2,7 @@ package cn.gaein.java.course_evaluation.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import cn.gaein.java.course_evaluation.dto.QuestionDto;
 import cn.gaein.java.course_evaluation.entity.Evaluation;
@@ -11,6 +12,7 @@ import cn.gaein.java.course_evaluation.repository.EvaluationRepository;
 import cn.gaein.java.course_evaluation.repository.QuestionRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
 
+import org.apache.tomcat.util.http.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,30 +34,30 @@ public class QuestionController {
 
     @GetMapping("")
     public Response getAllQuestion() {
-        Iterable<Question> questions = repository.findAll();
-        List<QuestionDto> dtos = new ArrayList<>();
-        for (Question question : questions) {
-            dtos.add(new QuestionDto(question));
-        }
-        if (dtos.isEmpty()) {
-            return questionNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var questions = repository.findAll();
+
+        return Response.success(
+            StreamSupport.stream(questions.spliterator(), false)
+                .map(QuestionDto::new)
+        );
     }
 
     @PostMapping("")
     public Response createQuestion(@RequestBody QuestionParam param) {
         // check if evaluation exists
-        long evaluationId = param.getEvaluationId();
-        Evaluation evaluation = evaluationRepository.findById(evaluationId);
+        var evaluationId = param.getEvaluationId();
+        var evaluation = evaluationRepository.findById(evaluationId);
+
         if (evaluation == null) {
             return evaluationNoFoundResponse;
         }
+
         // save question
-        Question question = new Question();
+        var question = new Question();
         question.setContent(param.getContent());
         question.setScore(param.getScore());
         question.setEvaluation(evaluation);
+
         repository.save(question);
         return Response.success(new QuestionDto(question));
     }
@@ -72,16 +74,17 @@ public class QuestionController {
     @PutMapping("/{id}")
     public Response updateQuestion(@PathVariable("id") long id, @RequestBody QuestionParam param) {
         // check if question exists
-        Question question = repository.findById(id);
+        var question = repository.findById(id);
         if (question == null) {
             return questionNotFoundResponse;
         }
         // check if evaluation exists
-        long evaluationId = param.getEvaluationId();
-        Evaluation evaluation = evaluationRepository.findById(evaluationId);
+        var evaluationId = param.getEvaluationId();
+        var evaluation = evaluationRepository.findById(evaluationId);
         if (evaluation == null) {
             return evaluationNoFoundResponse;
         }
+
         // update question
         question.setContent(param.getContent());
         question.setScore(param.getScore());
@@ -92,24 +95,23 @@ public class QuestionController {
 
     @DeleteMapping("/{id}")
     public Response deleteQuestion(@PathVariable("id") long id) {
-        Question question = repository.findById(id);
+        var question = repository.findById(id);
+
         if (question == null) {
             return questionNotFoundResponse;
         }
+
         repository.delete(question);
         return Response.success();
     }
 
     @GetMapping("/evaluation")
     public Response getAllQuestionByEvaluationId(@RequestParam long evaluationId) {
-        Iterable<Question> questions = repository.findByEvaluationId(evaluationId);
-        List<QuestionDto> dtos = new ArrayList<>();
-        for (Question question : questions) {
-            dtos.add(new QuestionDto(question));
-        }
-        if (dtos.isEmpty()) {
-            return questionNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var questions = repository.findByEvaluationId(evaluationId);
+
+        return Response.success(
+            StreamSupport.stream(questions.spliterator(), false)
+                .map(QuestionDto::new)
+        );
     }
 }
