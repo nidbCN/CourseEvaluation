@@ -10,7 +10,7 @@ import cn.gaein.java.course_evaluation.entity.Student;
 import cn.gaein.java.course_evaluation.param.StudentParam;
 import cn.gaein.java.course_evaluation.param.StudentRegisterParam;
 import cn.gaein.java.course_evaluation.repository.StudentRepository;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 import cn.gaein.java.course_evaluation.utils.HashUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;

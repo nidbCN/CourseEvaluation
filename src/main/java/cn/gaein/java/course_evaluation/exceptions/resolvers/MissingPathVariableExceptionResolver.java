@@ -2,7 +2,7 @@ package cn.gaein.java.course_evaluation.exceptions.resolvers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

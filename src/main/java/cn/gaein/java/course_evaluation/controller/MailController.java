@@ -4,7 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import cn.gaein.java.course_evaluation.mail.EmailServiceImpl;
 import cn.gaein.java.course_evaluation.param.MailParam;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 import cn.gaein.java.course_evaluation.utils.VerifyCodeUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class MailController {
 
     @PostMapping("")
     public Response sendMail(HttpSession session, @RequestBody MailParam param) {
-        String to = param.getTo();
+        String to = param.getReceive();
         String verifyCode = VerifyCodeUtil.generateVerifyCode(6);
         session.setAttribute("verifyCode", verifyCode);
         String mailText = String.format(MAIL_TEXT_TEMPLATE, verifyCode);

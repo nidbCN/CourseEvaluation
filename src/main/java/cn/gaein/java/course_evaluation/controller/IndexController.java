@@ -1,6 +1,6 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

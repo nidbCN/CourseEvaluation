@@ -7,7 +7,7 @@ import cn.gaein.java.course_evaluation.dto.TeacherDto;
 import cn.gaein.java.course_evaluation.entity.Teacher;
 import cn.gaein.java.course_evaluation.param.TeacherParam;
 import cn.gaein.java.course_evaluation.repository.TeacherRepository;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;

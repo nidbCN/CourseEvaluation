@@ -1,11 +1,9 @@
 package cn.gaein.java.course_evaluation.controller;
 
 import cn.gaein.java.course_evaluation.repository.AdminRepository;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 import cn.gaein.java.course_evaluation.utils.HashUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.StreamSupport;
 
 import cn.gaein.java.course_evaluation.dto.AdminDto;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class AdminController {
 
     private final AdminRepository repository;
-
     private final Response adminNotFoundResponse = Response.notFound("Admin not found");
     private final Response userNameAlreadyExistsResponse = Response.badRequest("User name already exists");
 
@@ -38,25 +35,19 @@ public class AdminController {
     }
 
     @GetMapping("")
-    public Response getAllAdmins(@RequestParam String name) {
-        var adminList = repository.findAll();
+    public Response getAdminList(@RequestParam(required = false) String name) {
+        Iterable<Admin> adminList;
+
+        if (name == null) {
+            adminList = repository.findAll();
+
+        } else {
+            adminList = repository.findByName(name);
+        }
 
         return Response.success(
             StreamSupport.stream(adminList.spliterator(), false)
                 .map(AdminDto::new));
-    }
-
-    @GetMapping("")
-    public Response searchAdminsByName(@RequestParam String name) {
-        Iterable<Admin> admins = repository.findByName(name);
-        List<AdminDto> dtos = new ArrayList<>();
-        for (Admin admin : admins) {
-            dtos.add(new AdminDto(admin));
-        }
-        if (dtos.isEmpty()) {
-            return adminNotFoundResponse;
-        }
-        return Response.success(dtos);
     }
 
     @PostMapping("")
@@ -117,9 +108,10 @@ public class AdminController {
         return Response.success();
     }
 
-    @GetMapping("/login")
-    public Response login(@RequestParam String username, @RequestParam String password) {
-        Admin admin = repository.findByUsername(username);
+    @PostMapping("/session")
+    public Response createSession(@RequestParam String username, @RequestParam String password) {
+        var admin = repository.findByUsername(username);
+
         if (admin == null) {
             return adminNotFoundResponse;
         }

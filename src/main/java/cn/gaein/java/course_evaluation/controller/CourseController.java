@@ -2,6 +2,7 @@ package cn.gaein.java.course_evaluation.controller;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.StreamSupport;
 
 import cn.gaein.java.course_evaluation.dto.CourseDto;
 import cn.gaein.java.course_evaluation.dto.StudentDto;
@@ -12,7 +13,7 @@ import cn.gaein.java.course_evaluation.param.CourseParam;
 import cn.gaein.java.course_evaluation.repository.CourseRepository;
 import cn.gaein.java.course_evaluation.repository.StudentRepository;
 import cn.gaein.java.course_evaluation.repository.TeacherRepository;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,79 +40,10 @@ public class CourseController {
 
     @Autowired
     public CourseController(CourseRepository repository, TeacherRepository teacherRepository,
-            StudentRepository studentRepository) {
+                            StudentRepository studentRepository) {
         this.repository = repository;
         this.teacherRepository = teacherRepository;
         this.studentRepository = studentRepository;
-    }
-
-    @GetMapping("")
-    public Response getAllCourses() {
-        Iterable<Course> courses = repository.findAll();
-        List<CourseDto> dtos = new ArrayList<>();
-        for (Course course : courses) {
-            dtos.add(new CourseDto(course));
-        }
-        if (dtos.isEmpty()) {
-            return courseNotFoundResponse;
-        }
-        return Response.success(dtos);
-    }
-
-    @PostMapping("")
-    public Response createCourse(@RequestBody CourseParam param) {
-        // check if teacher exists
-        long teacherId = param.getTeacherId();
-        Teacher teacher = teacherRepository.findById(teacherId);
-        if (teacher == null) {
-            return teacherNotFoundResponse;
-        }
-        // save course
-        Course course = new Course();
-        course.setTitle(param.getTitle());
-        course.setDescription(param.getDescription());
-        course.setTeacher(teacher);
-        repository.save(course);
-        return Response.success(new CourseDto(course));
-    }
-
-    @GetMapping("/{id}")
-    public Response getCourseById(@PathVariable("id") long id) {
-        Course course = repository.findById(id);
-        if (course == null) {
-            return courseNotFoundResponse;
-        }
-        return Response.success(new CourseDto(course));
-    }
-
-    @PutMapping("/{id}")
-    public Response updateCourse(@PathVariable("id") long id, @RequestBody CourseParam param) {
-        Course course = repository.findById(id);
-        if (course == null) {
-            return courseNotFoundResponse;
-        }
-        // check if teacher exists
-        long teacherId = param.getTeacherId();
-        Teacher teacher = teacherRepository.findById(teacherId);
-        if (teacher == null) {
-            return teacherNotFoundResponse;
-        }
-        // update course
-        course.setTitle(param.getTitle());
-        course.setDescription(param.getDescription());
-        course.setTeacher(teacher);
-        repository.save(course);
-        return Response.success(new CourseDto(course));
-    }
-
-    @DeleteMapping("/{id}")
-    public Response deleteCourse(@PathVariable("id") long id) {
-        Course course = repository.findById(id);
-        if (course == null) {
-            return courseNotFoundResponse;
-        }
-        repository.delete(course);
-        return Response.success();
     }
 
     @GetMapping("/search")
@@ -127,48 +59,129 @@ public class CourseController {
         return Response.success(dtos);
     }
 
-    @GetMapping("/{id}/students")
-    public Response getStudentsByCourseId(@PathVariable("id") long id) {
-        Course course = repository.findById(id);
+    public Response getCourseList(@RequestParam(required = false) String title) {
+        Iterable<Course> courses;
+
+        if (title == null) {
+            courses = repository.findAll();
+        } else {
+            courses = repository.findByTitle(title);
+        }
+
+        return Response.success(
+            StreamSupport.stream(courses.spliterator(), false)
+                .map(CourseDto::new)
+        );
+    }
+
+    @PostMapping("")
+    public Response createCourse(@RequestBody CourseParam param) {
+        // check if teacher exists
+        var teacherId = param.getTeacherId();
+        var teacher = teacherRepository.findById(teacherId);
+        if (!teacher.isPresent()) {
+            return teacherNotFoundResponse;
+        }
+
+        // save course
+        Course course = new Course();
+        course.setTitle(param.getTitle());
+        course.setDescription(param.getDescription());
+        course.setTeacher(teacher.get());
+        repository.save(course);
+        return Response.success(new CourseDto(course));
+    }
+
+    @GetMapping("/{id}")
+    public Response getCourseById(@PathVariable("id") long id) {
+        var course = repository.findById(id);
+        return course == null
+            ? courseNotFoundResponse
+            : Response.success(new CourseDto(course));
+    }
+
+    public Response updateCourse(@PathVariable("id") long id, @RequestBody CourseParam param) {
+        var course = repository.findById(id);
+
         if (course == null) {
             return courseNotFoundResponse;
         }
-        List<StudentDto> dtos = new ArrayList<>();
-        for (Student student : course.getStudents()) {
-            dtos.add(new StudentDto(student));
+
+        // check if teacher exists
+        long teacherId = param.getTeacherId();
+        var teacher = teacherRepository.findById(teacherId);
+        if (teacher == null) {
+            return teacherNotFoundResponse;
         }
-        if (dtos.isEmpty()) {
-            return studentNotFoundResponse;
-        }
-        return Response.success(dtos);
+
+        // update course
+        course.setTitle(param.getTitle());
+        course.setDescription(param.getDescription());
+        course.setTeacher(teacher);
+        repository.save(course);
+        return Response.success(new CourseDto(course));
     }
+
+    @DeleteMapping("/{id}")
+    public Response deleteCourse(@PathVariable("id") long id) {
+        var course = repository.findById(id);
+
+        if (course == null) {
+            return courseNotFoundResponse;
+        }
+
+        repository.delete(course);
+        return Response.success();
+    }
+
+    public Response test(long id) {
+        var course = repository.findById(id);
+
+        return course == null
+            ? courseNotFoundResponse
+            : Response.success();
+    }
+
+    @GetMapping("/{id}/students")
+    public Response getStudentsByCourseId(@PathVariable("id") long id) {
+        var course = repository.findById(id);
+
+        return course == null
+            ? courseNotFoundResponse
+            : Response.success(
+            course.students.stream().map(StudentDto::new)
+        );
+    }
+
 
     @PostMapping("/{id}/student")
     public Response insertCourseStudent(@PathVariable("id") long id, @RequestParam long studentId) {
-        Course course = repository.findById(id);
+        var course = repository.findById(id);
         if (course == null) {
             return teacherNotFoundResponse;
         }
-        Student student = studentRepository.findById(studentId);
+        var student = studentRepository.findById(studentId);
         if (student == null) {
             return studentNotFoundResponse;
         }
         // check if student is already in course
         if (course.getStudents().contains(student)) {
-            return Response.badRequest("Student is already in course");
+            return Response.noContent("Student is already in course");
         }
+
         course.students.add(student);
         repository.save(course);
+
         return Response.success(new CourseDto(course));
     }
 
     @DeleteMapping("/{id}/student")
     public Response deleteCourseStudent(@PathVariable("id") long id, @RequestParam long studentId) {
-        Course course = repository.findById(id);
+        var course = repository.findById(id);
         if (course == null) {
             return teacherNotFoundResponse;
         }
-        Student student = studentRepository.findById(studentId);
+        var student = studentRepository.findById(studentId);
         if (student == null) {
             return studentNotFoundResponse;
         }
@@ -179,27 +192,20 @@ public class CourseController {
 
     @GetMapping("/teacher")
     public Response getAllCourseByTeacherId(@RequestParam long teacherId) {
-        Iterable<Course> courses = repository.findByTeacherId(teacherId);
-        List<CourseDto> dtos = new ArrayList<>();
-        for (Course course : courses) {
-            dtos.add(new CourseDto(course));
-        }
-        if (dtos.isEmpty()) {
-            return courseNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var courses = repository.findByTeacherId(teacherId);
+
+        return Response.success(
+            StreamSupport.stream(courses.spliterator(), false)
+                .map(CourseDto::new)
+        );
     }
 
     @GetMapping("/student")
     public Response getAllCourseByStudentId(@RequestParam long studentId) {
-        List<Course> courses = repository.findByStudentId(studentId);
-        List<CourseDto> dtos = new ArrayList<>();
-        for (Course course : courses) {
-            dtos.add(new CourseDto(course));
-        }
-        if (dtos.isEmpty()) {
-            return courseNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var courses = repository.findByStudentId(studentId);
+
+        return Response.success(
+            courses.stream().map(CourseDto::new)
+        );
     }
 }

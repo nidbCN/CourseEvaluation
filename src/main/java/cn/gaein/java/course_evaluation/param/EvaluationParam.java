@@ -1,22 +1,25 @@
 package cn.gaein.java.course_evaluation.param;
 
-public class EvaluationParam {
-    private Long studentId;
-    private Long courseId;
+import org.springframework.validation.annotation.Validated;
 
-    public Long getStudentId() {
+@Validated
+public class EvaluationParam {
+    private long studentId;
+    private long courseId;
+
+    public long getStudentId() {
         return this.studentId;
     }
 
-    public void setStudentId(Long studentId) {
+    public void setStudentId(long studentId) {
         this.studentId = studentId;
     }
 
-    public Long getCourseId() {
+    public long getCourseId() {
         return this.courseId;
     }
 
-    public void setCourseId(Long courseId) {
+    public void setCourseId(long courseId) {
         this.courseId = courseId;
     }
 }

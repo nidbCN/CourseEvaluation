@@ -2,6 +2,7 @@ package cn.gaein.java.course_evaluation.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import cn.gaein.java.course_evaluation.dto.PraiseDto;
 import cn.gaein.java.course_evaluation.entity.Evaluation;
@@ -9,7 +10,7 @@ import cn.gaein.java.course_evaluation.entity.Praise;
 import cn.gaein.java.course_evaluation.param.PraiseParam;
 import cn.gaein.java.course_evaluation.repository.EvaluationRepository;
 import cn.gaein.java.course_evaluation.repository.PraiseRepository;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,32 +34,29 @@ public class PraiseController {
 
     @GetMapping("")
     public Response getAllPraise() {
-        Iterable<Praise> praises = repository.findAll();
-        List<PraiseDto> dtos = new ArrayList<>();
-        for (Praise praise : praises) {
-            dtos.add(new PraiseDto(praise));
-        }
-        if (dtos.isEmpty()) {
-            return praiseNotFoundResponse;
-        }
-        return Response.success(dtos);
+        var praises = repository.findAll();
+
+        return Response.success(
+            StreamSupport.stream(praises.spliterator(), false)
+                .map(PraiseDto::new)
+        );
     }
 
     @PostMapping("")
     public Response createPraise(@RequestBody PraiseParam param) {
         // check if evaluation exists
-        long evaluationId = param.getEvaluationId();
-        Evaluation evaluation = evaluationRepository.findById(evaluationId);
+        var evaluationId = param.getEvaluationId();
+        var evaluation = evaluationRepository.findById(evaluationId);
         if (evaluation == null) {
             return evaluationNotFoundResponse;
         }
         // check if evaluation has already been praised
-        Praise check = repository.findByEvaluationId(evaluationId);
+        var check = repository.findByEvaluationId(evaluationId);
         if (check != null) {
             return evaluationHasBeenPraised;
         }
         // save praise
-        Praise praise = new Praise();
+        var praise = new Praise();
         praise.setContent(param.getContent());
         praise.setEvaluation(evaluation);
         repository.save(praise);
@@ -67,54 +65,61 @@ public class PraiseController {
 
     @GetMapping("/{id}")
     public Response getPraiseById(@PathVariable("id") long id) {
-        Praise praise = repository.findById(id);
-        if (praise == null) {
-            return praiseNotFoundResponse;
-        }
-        return Response.success(new PraiseDto(praise));
+        var praise = repository.findById(id);
+
+        return praise == null
+            ? praiseNotFoundResponse
+            : Response.success(new PraiseDto(praise));
     }
 
     @PutMapping("/{id}")
     public Response updatePraise(@PathVariable("id") long id, @RequestBody PraiseParam param) {
         // check if praise exists
-        Praise praise = repository.findById(id);
+        var praise = repository.findById(id);
         if (praise == null) {
             return praiseNotFoundResponse;
         }
+
         // check if evaluation exists
-        long evaluationId = param.getEvaluationId();
-        Evaluation evaluation = evaluationRepository.findById(evaluationId);
+        var evaluationId = param.getEvaluationId();
+        var evaluation = evaluationRepository.findById(evaluationId);
+
         if (evaluation == null) {
             return evaluationNotFoundResponse;
         }
+
         // check if evaluation has already been praised
-        Praise check = repository.findByEvaluationId(evaluationId);
+        var check = repository.findByEvaluationId(evaluationId);
         if (check != null) {
             return evaluationHasBeenPraised;
         }
         // update praise
+
         praise.setContent(param.getContent());
         praise.setEvaluation(evaluation);
         repository.save(praise);
+
         return Response.success(new PraiseDto(praise));
     }
 
     @DeleteMapping("/{id}")
     public Response deletePraise(@PathVariable("id") long id) {
-        Praise praise = repository.findById(id);
+        var praise = repository.findById(id);
+
         if (praise == null) {
             return praiseNotFoundResponse;
         }
+
         repository.delete(praise);
         return Response.success();
     }
 
     @GetMapping("/evaluation")
     public Response getPraiseByEvaluationId(@RequestParam long evaluationId) {
-        Praise praise = repository.findByEvaluationId(evaluationId);
-        if (praise == null) {
-            return praiseNotFoundResponse;
-        }
-        return Response.success(new PraiseDto(praise));
+        var praise = repository.findByEvaluationId(evaluationId);
+
+        return praise == null
+            ? praiseNotFoundResponse
+            : Response.success(new PraiseDto(praise));
     }
 }

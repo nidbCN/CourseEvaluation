@@ -9,7 +9,7 @@ import cn.gaein.java.course_evaluation.entity.Question;
 import cn.gaein.java.course_evaluation.param.QuestionParam;
 import cn.gaein.java.course_evaluation.repository.EvaluationRepository;
 import cn.gaein.java.course_evaluation.repository.QuestionRepository;
-import cn.gaein.java.course_evaluation.response.Response;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

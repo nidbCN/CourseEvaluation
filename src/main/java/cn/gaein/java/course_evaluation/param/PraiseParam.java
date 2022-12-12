@@ -1,8 +1,11 @@
 package cn.gaein.java.course_evaluation.param;
 
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class PraiseParam {
     private String content;
-    private Long evaluationId;
+    private long evaluationId;
 
     public String getContent() {
         return this.content;
@@ -12,11 +15,11 @@ public class PraiseParam {
         this.content = content;
     }
 
-    public Long getEvaluationId() {
+    public long getEvaluationId() {
         return this.evaluationId;
     }
 
-    public void setEvaluationId(Long evaluationId) {
+    public void setEvaluationId(long evaluationId) {
         this.evaluationId = evaluationId;
     }
 }

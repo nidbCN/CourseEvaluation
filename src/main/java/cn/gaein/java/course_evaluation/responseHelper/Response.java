@@ -1,4 +1,4 @@
-package cn.gaein.java.course_evaluation.response;
+package cn.gaein.java.course_evaluation.responseHelper;
 
 public class Response {
     private Integer status;

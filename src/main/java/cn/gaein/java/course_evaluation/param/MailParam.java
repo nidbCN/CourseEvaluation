@@ -1,13 +1,13 @@
 package cn.gaein.java.course_evaluation.param;
 
 public class MailParam {
-    private String to;
+    private String receive;
 
-    public String getTo() {
-        return this.to;
+    public String getReceive() {
+        return this.receive;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setReceive(String receive) {
+        this.receive = receive;
     }
 }
