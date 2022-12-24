@@ -1,5 +1,8 @@
 package cn.gaein.java.course_evaluation.param;
 
+import org.springframework.validation.annotation.Validated;
+
+@Validated
 public class AdminParam {
     private String name;
     private String username;

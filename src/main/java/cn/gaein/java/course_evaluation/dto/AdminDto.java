@@ -4,7 +4,7 @@ import cn.gaein.java.course_evaluation.entity.Admin;
 
 public class AdminDto {
 
-    private Long id;
+    private long id;
     private String name;
     private String username;
 
@@ -17,11 +17,11 @@ public class AdminDto {
         this.username = admin.getUsername();
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

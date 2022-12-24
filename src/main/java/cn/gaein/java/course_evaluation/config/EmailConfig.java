@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @ComponentScan(basePackages = "com.aimerneige.course_evaluation.mail")
 @PropertySource("classpath:application.yml")
-public class EmailConfiguration {
+public class EmailConfig {
 
     @Value("${spring.mail.host}")
     private String mailServerHost;

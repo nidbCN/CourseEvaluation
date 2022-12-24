@@ -35,7 +35,7 @@ public class AdminController {
     }
 
     @GetMapping("")
-    public Response getAdminList(@RequestParam(required = false) String name) {
+    public Response listAdmin(@RequestParam(required = false) String name) {
         Iterable<Admin> adminList;
 
         if (name == null) {
@@ -89,9 +89,16 @@ public class AdminController {
         }
 
         // update admin
-        admin.setName(param.getName());
-        admin.setUsername(param.getUsername());
-        admin.setPassword(HashUtils.md5(param.getPassword()));
+        if (param.getName() != null) {
+            admin.setName(param.getName());
+        }
+        if (param.getUsername() != null) {
+            admin.setUsername(param.getUsername());
+        }
+        if (param.getPassword() != null) {
+            admin.setPassword(HashUtils.md5(param.getPassword()));
+        }
+
         repository.save(admin);
         return Response.success(new AdminDto(admin));
     }
