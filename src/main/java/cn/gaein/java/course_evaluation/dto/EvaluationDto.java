@@ -1,19 +1,16 @@
 package cn.gaein.java.course_evaluation.dto;
 
+import cn.gaein.java.course_evaluation.entity.Evaluation;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
-import cn.gaein.java.course_evaluation.entity.Evaluation;
-import cn.gaein.java.course_evaluation.entity.Question;
 
 public class EvaluationDto {
-
     private Long id;
-    private Long praiseId;
-    private List<Long> questionIds;
-    private Long studentId;
-    private Long courseId;
+    private PraiseDto praise;
+    private List<QuestionDto> questions = new ArrayList<>();
+    private StudentDto student;
+    private CourseDto course;
 
     public EvaluationDto() {
     }
@@ -21,26 +18,22 @@ public class EvaluationDto {
     public EvaluationDto(Evaluation evaluation) {
         this.id = evaluation.getId();
         if (evaluation.getPraise() != null) {
-            this.praiseId = evaluation.getPraise().getId();
-        } else {
-            this.praiseId = 0L;
+            this.praise = new PraiseDto(evaluation.getPraise());
         }
-        this.questionIds = new ArrayList<>();
-        Set<Question> questions = evaluation.getQuestions();
+
+        var questions = evaluation.getQuestions();
         if (questions != null) {
-            for (Question question : questions) {
-                this.questionIds.add(question.getId());
+            for (var question : questions) {
+                this.questions.add(new QuestionDto(question));
             }
         }
+
         if (evaluation.getStudent() != null) {
-            this.studentId = evaluation.getStudent().getId();
-        } else {
-            this.studentId = 0L;
+            this.student = new StudentDto(evaluation.getStudent());
         }
+
         if (evaluation.getCourse() != null) {
-            this.courseId = evaluation.getCourse().getId();
-        } else {
-            this.courseId = 0L;
+            this.course = new CourseDto(evaluation.getCourse());
         }
     }
 
@@ -52,35 +45,35 @@ public class EvaluationDto {
         this.id = id;
     }
 
-    public Long getPraiseId() {
-        return this.praiseId;
+    public PraiseDto getPraise() {
+        return praise;
     }
 
-    public void setPraiseId(Long praiseId) {
-        this.praiseId = praiseId;
+    public void setPraise(PraiseDto praise) {
+        this.praise = praise;
     }
 
-    public List<Long> getQuestionIds() {
-        return this.questionIds;
+    public List<QuestionDto> getQuestions() {
+        return questions;
     }
 
-    public void setQuestionIds(List<Long> questionIds) {
-        this.questionIds = questionIds;
+    public void setQuestions(List<QuestionDto> questions) {
+        this.questions = questions;
     }
 
-    public Long getStudentId() {
-        return this.studentId;
+    public StudentDto getStudent() {
+        return student;
     }
 
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
+    public void setStudent(StudentDto student) {
+        this.student = student;
     }
 
-    public Long getCourseId() {
-        return this.courseId;
+    public CourseDto getCourse() {
+        return course;
     }
 
-    public void setCourseId(Long courseId) {
-        this.courseId = courseId;
+    public void setCourse(CourseDto course) {
+        this.course = course;
     }
 }
