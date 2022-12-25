@@ -49,10 +49,8 @@ public class StudentController {
         student.setIdNumber(param.getIdNumber());
         student.setName(param.getName());
         student.setPhone(param.getPhone());
-        student.setSex(param.getSex());
         student.setEmail(param.getEmail());
         student.setPassword(HashUtils.md5(param.getPassword()));
-        student.setAge(param.getAge());
 
         repository.save(student);
         return Response.success(new StudentDto(student));
@@ -83,10 +81,8 @@ public class StudentController {
         student.setIdNumber(param.getIdNumber());
         student.setName(param.getName());
         student.setPhone(param.getPhone());
-        student.setSex(param.getSex());
         student.setEmail(param.getEmail());
         student.setPassword(HashUtils.md5(param.getPassword()));
-        student.setAge(param.getAge());
 
         repository.save(student);
         return Response.success(new StudentDto(student));
@@ -148,10 +144,8 @@ public class StudentController {
         student.setIdNumber(param.getIdNumber());
         student.setName(param.getName());
         student.setPhone(param.getPhone());
-        student.setSex(param.getSex());
         student.setEmail(param.getEmail());
         student.setPassword(HashUtils.md5(param.getPassword()));
-        student.setAge(param.getAge());
 
         repository.save(student);
         return Response.success(new StudentDto(student));

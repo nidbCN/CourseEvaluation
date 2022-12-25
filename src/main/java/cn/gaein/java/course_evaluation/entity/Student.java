@@ -20,17 +20,11 @@ public class Student {
     @Column(length = 11)
     private String phone; // 电话
 
-    @Column(length = 2)
-    private String sex; // 性别
-
     @Column
     private String email; // 邮箱
 
     @Column
     private String password; // 密码
-
-    @Column
-    private Integer age; // 年龄
 
     @OneToMany(mappedBy = "student")
     public Set<Evaluation> evaluations; // 评价
@@ -67,14 +61,6 @@ public class Student {
         this.phone = phone;
     }
 
-    public String getSex() {
-        return this.sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
     public String getEmail() {
         return this.email;
     }
@@ -89,14 +75,6 @@ public class Student {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Integer getAge() {
-        return this.age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public Set<Evaluation> getEvaluations() {

@@ -4,10 +4,8 @@ public class StudentParam {
     private String idNumber;
     private String name;
     private String phone;
-    private String sex;
     private String email;
     private String password;
-    private Integer age;
 
     public String getIdNumber() {
         return this.idNumber;
@@ -23,22 +21,6 @@ public class StudentParam {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getPhone() {
-        return this.phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getSex() {
-        return this.sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
     }
 
     public String getEmail() {
@@ -57,11 +39,11 @@ public class StudentParam {
         this.password = password;
     }
 
-    public Integer getAge() {
-        return this.age;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

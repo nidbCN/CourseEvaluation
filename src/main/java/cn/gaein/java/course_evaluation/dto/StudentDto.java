@@ -1,11 +1,11 @@
 package cn.gaein.java.course_evaluation.dto;
 
+import cn.gaein.java.course_evaluation.entity.Evaluation;
+import cn.gaein.java.course_evaluation.entity.Student;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import cn.gaein.java.course_evaluation.entity.Evaluation;
-import cn.gaein.java.course_evaluation.entity.Student;
 
 public class StudentDto {
 
@@ -26,9 +26,7 @@ public class StudentDto {
         this.idNumber = student.getIdNumber();
         this.name = student.getName();
         this.phone = student.getPhone();
-        this.sex = student.getSex();
         this.email = student.getEmail();
-        this.age = student.getAge();
         this.evaluationIds = new ArrayList<>();
         Set<Evaluation> evaluations = student.getEvaluations();
         if (evaluations != null) {
