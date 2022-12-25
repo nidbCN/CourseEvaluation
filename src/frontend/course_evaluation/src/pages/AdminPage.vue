@@ -385,6 +385,13 @@
                 >mdi-delete
                 </v-icon>
               </v-btn>
+              <v-btn icon @click="addEvaluation(item)">
+                <v-icon
+                    small
+                    color="primary">
+                  mdi-file-chart
+                </v-icon>
+              </v-btn>
             </template>
           </v-data-table>
         </v-card-text>
@@ -749,6 +756,17 @@ export default {
         this.roleView.studentDisplayList.splice(
             this.roleView.studentDisplayList.findIndex(x => x.id === id), 1);
       }
+    },
+    addEvaluation: function (courseItem) {
+      requestHelper.get(`/course/${courseItem.id}/students`)
+          .then(async stuResp => {
+            for (const studentItem of stuResp['data']) {
+              await requestHelper.post("/evaluation", {
+                courseId: courseItem.id,
+                studentId: studentItem.id
+              });
+            }
+          });
     },
     findStudentNameById: function (id) {
       for (const student of this.roleView.studentDisplayList) {
