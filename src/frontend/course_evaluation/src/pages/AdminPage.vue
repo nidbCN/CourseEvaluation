@@ -4,6 +4,14 @@
       <v-card>
         <v-card-title>
           用户管理
+          <v-spacer></v-spacer>
+          <v-text-field
+              v-model="roleView.keyword"
+              append-icon="mdi-magnify"
+              label="搜索"
+              single-line
+              hide-details
+          ></v-text-field>
         </v-card-title>
         <v-card-text>
           <v-row>
@@ -36,7 +44,7 @@
 
                             <v-list-item-action>
                               <v-btn icon>
-                                <v-icon color="warning">mdi-delete</v-icon>
+                                <v-icon color="error">mdi-delete</v-icon>
                               </v-btn>
                             </v-list-item-action>
                           </v-list-item>
@@ -94,7 +102,7 @@
 
                           <v-list-item-action>
                             <v-btn icon>
-                              <v-icon color="warning">mdi-delete</v-icon>
+                              <v-icon color="error">mdi-delete</v-icon>
                             </v-btn>
                           </v-list-item-action>
                         </v-list-item>
@@ -151,7 +159,7 @@
 
                           <v-list-item-action>
                             <v-btn icon>
-                              <v-icon color="warning">mdi-delete</v-icon>
+                              <v-icon color="error">mdi-delete</v-icon>
                             </v-btn>
                           </v-list-item-action>
                         </v-list-item>
@@ -205,12 +213,11 @@
               sort-by="id"
           >
             <template v-slot:top>
-              <v-toolbar
-                  flat
-              >
+              <v-toolbar flat>
                 <v-spacer></v-spacer>
+                <!-- 添加/编辑 -->
                 <v-dialog
-                    v-model="courseView.dialog.addDialog"
+                    v-model="courseView.dialog.editDialog"
                     max-width="500px"
                 >
                   <template v-slot:activator="{ on, attrs }">
@@ -220,15 +227,14 @@
                         class="mb-2"
                         v-bind="attrs"
                         v-on="on"
-                    >
-                      添加
+                        @click="openAddCourse"
+                    >添加课程
                     </v-btn>
                   </template>
                   <v-card>
                     <v-card-title>
-                      <span class="text-h5"> 添加课程 </span>
+                      <span class="text-h5"> 课程管理 </span>
                     </v-card-title>
-
                     <v-card-text>
                       <v-container>
                         <v-row>
@@ -257,10 +263,14 @@
                               sm="6"
                               md="4"
                           >
-                            <v-text-field
-                                v-model="courseView.editedItem.teacherName"
+                            <v-select
+                                v-model="courseView.editedItem.teacherId"
+                                :items="roleView.teacherDisplayList"
+                                item-text="name"
+                                item-value="id"
                                 label="任课老师"
-                            ></v-text-field>
+                            >
+                            </v-select>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -271,16 +281,9 @@
                       <v-btn
                           color="blue darken-1"
                           text
-                          @click="courseView.dialog.addDialog = false"
+                          @click="saveCourse"
                       >
-                        Cancel
-                      </v-btn>
-                      <v-btn
-                          color="blue darken-1"
-                          text
-                          @click="addItem(courseView.editedItem)"
-                      >
-                        Save
+                        保存
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -288,36 +291,71 @@
               </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon
-                  small
-                  color="primary"
-                  class="mr-2"
-                  @click="editItem(item)"
-              >
-                mdi-pencil
-              </v-icon>
-              <v-icon
-                  small
-                  color="warning"
-                  @click="deleteItem(item)"
-              >
-                mdi-delete
-              </v-icon>
+              <v-btn icon @click="openResultList(item)">
+                <v-icon
+                    small
+                    color="primary"
+                >mdi-folder-open
+                </v-icon>
+              </v-btn>
+              <v-btn icon @click="openEditCourse(item)">
+                <v-icon
+                    small
+                    color="success"
+                >mdi-pencil
+                </v-icon>
+              </v-btn>
+              <v-btn icon @click="deleteCourse(item)">
+                <v-icon
+                    small
+                    color="error"
+                >mdi-delete
+                </v-icon>
+              </v-btn>
             </template>
           </v-data-table>
         </v-card-text>
       </v-card>
     </v-container>
+    <v-dialog
+        v-model="resultView.resultDialog"
+        width="640"
+    >
+      <v-card>
+        <v-card-title class="text-h5 grey lighten-2">
+          {{ resultView.selectCourse.title }}
+        </v-card-title>
+
+        <v-card-text>
+
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+              color="primary"
+              text
+              @click="resultView.resultDialog = false"
+          >关闭
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "AdminPage",
   data: () => ({
-    displayHeight: 280,
+    displayHeight: 304,
     roleView: {
+      keyword: "",
       adminDisplayList: [{
         id: 1,
         name: "系统管理",
@@ -334,7 +372,28 @@ export default {
         name: "柴锐",
         phone: "19945458763",
         username: "cherry"
-      }],
+      },
+        {
+          id: 2,
+          idNumber: 2007212,
+          name: "许颜杰",
+          phone: "19942228763",
+          username: "xyj"
+        },
+        {
+          id: 3,
+          idNumber: 2007212,
+          name: "于一",
+          phone: "19942228763",
+          username: "yu1"
+        },
+        {
+          id: 4,
+          idNumber: 2007212,
+          name: "秦品乐",
+          phone: "19942228763",
+          username: "pyl"
+        }],
       studentDisplayList: [{
         id: 1,
         idNumber: 2007040134,
@@ -347,7 +406,7 @@ export default {
           idNumber: 2007040124,
           name: "郭忠昊",
           phone: "19945458763",
-          username: "yuanpi"
+          username: "yuan_pi"
         }],
     },
     courseView: {
@@ -374,32 +433,109 @@ export default {
         {
           id: 0,
           title: "Java程序设计",
-          description: "jvav哈哈哈哈jvav",
+          description: "j v a v 哈哈哈哈 j v a v",
+          teacherId: 3,
           teacherName: "于一",
-        }
+        },
+        {
+          id: 1,
+          title: "数值分析",
+          description: "头疼的课",
+          teacherId: 4,
+          teacherName: "秦品乐",
+        },
+        {
+          id: 2,
+          title: "高等数学",
+          teacherId: 4,
+          description: "头疼的课",
+          teacherName: "abc",
+        },
+        {
+          id: 3,
+          title: "线性代数",
+          teacherId: 4,
+          description: "头疼的课",
+          teacherName: "sss",
+        },
       ],
       dialog: {
-        addDialog: false,
-        deleteDialog: false
+        editDialog: false,
+        deleteDialog: false,
       },
       editedItem: {
+        id: -1,
         title: "",
         description: "",
-        teacherName: "",
+        teacherId: -1,
+      },
+    },
+    resultView: {
+      resultDialog: false,
+      selectCourse: -1,
+      resultDict: {
+        1: [{
+          id: 1,
+          praiseId: -1,
+          questionIds: [1, 2, 3],
+          studentId: 1,
+          courseId: 1
+        }],
       }
     }
   }),
   methods: {
-    addItem: function (item) {
-      this.courseView.courseList.push(item);
+    openAddCourse: function () {
+      this.courseView.editedItem = {
+        id: -1,
+        title: "",
+        description: "",
+        teacherId: -1,
+      };
     },
-    deleteItem: function (item) {
-      this.courseView.courseList.unshift(item);
+    openEditCourse: function (item) {
+      // copy item
+      this.courseView.editedItem = structuredClone(item);
+
+      this.courseView.dialog.editDialog = true;
     },
-    editItem: function (item) {
-      this.courseView.editedItem = item;
-    }
+    openResultList: function (item) {
+      this.resultView.selectCourse = item;
+      this.resultView.resultDialog = true;
+    },
+    saveCourse: async function () {
+      const index = this.courseView.courseList.findIndex(
+          x => x.id === this.courseView.editedItem.id);
+      if (index === -1) {
+        // 新增
+        const resp = await axios.post("/course");
+        console.log(resp);
+
+        this.courseView.editedItem["teacherName"]
+            = this.roleView.teacherDisplayList
+            .find(x => x.id === this.courseView.editedItem.teacherId)
+            .name;
+
+        // noinspection JSCheckFunctionSignatures
+        this.courseView.courseList.push(
+            this.courseView.editedItem);
+      } else {
+        // 修改
+        const oldItem = this.courseView.courseList[index];
+        oldItem.title = this.courseView.editedItem.title;
+        oldItem.description = this.courseView.editedItem.description;
+        oldItem.teacherId = this.courseView.editedItem.teacherId;
+        oldItem.teacherName = this.roleView.teacherDisplayList
+            .find(x => x.id === oldItem.teacherId)
+            .name;
+      }
+
+      this.courseView.dialog.editDialog = false;
+    },
+    deleteCourse: function (item) {
+      this.courseView.courseList.splice(
+          this.courseView.courseList.indexOf(item), 1);
+    },
   }
 }
 </script>
-

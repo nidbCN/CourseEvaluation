@@ -38,13 +38,11 @@
             :src="require('@/assets/picture.webp')">
           <v-card-title style="opacity: 0.4" class="black" v-text="title"></v-card-title>
         </v-img>
-        <v-card-text>
+        <v-card-text height="100%">
           <v-list
               nav
-              dense
           >
             <v-list-item-group
-                v-model="menu.menu"
                 active-class="deep-purple--text text--accent-4"
             >
               <v-list-item v-for="(menuItem,i) in menu.menu" :key="i">
