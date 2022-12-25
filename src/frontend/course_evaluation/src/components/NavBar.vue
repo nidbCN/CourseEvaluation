@@ -32,12 +32,11 @@
         absolute
         temporary
     >
-      <v-card height="100%">
+      <v-card tile elevation="0" height="100%">
         <v-img
             class="white--text align-end"
-            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
             :src="require('@/assets/picture.webp')">
-          <v-card-title v-text="title"></v-card-title>
+          <v-card-title style="opacity: 0.4" class="black" v-text="title"></v-card-title>
         </v-img>
         <v-card-text>
           <v-list
