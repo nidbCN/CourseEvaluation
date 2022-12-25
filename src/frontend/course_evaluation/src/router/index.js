@@ -4,6 +4,7 @@ import HelloWorld from "@/components/HelloWorld.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
 import AdminPage from "@/pages/AdminPage.vue";
+import StudentPage from "@/pages/StudentPage.vue";
 
 Vue.use(VueRouter)
 
@@ -27,12 +28,18 @@ const adminPage = {
     name: 'adminPage',
     component: AdminPage
 }
+const studentPage = {
+    path: '/student',
+    name: 'studentPage',
+    component: StudentPage
+}
 
 const routes = [
     homePage,
     loginPage,
     registerPage,
-    adminPage
+    adminPage,
+    studentPage
 ]
 
 const router = new VueRouter({
@@ -42,4 +49,4 @@ const router = new VueRouter({
 })
 
 export default router
-export {homePage, loginPage, registerPage, adminPage}
+export {homePage, loginPage, registerPage, adminPage, studentPage}

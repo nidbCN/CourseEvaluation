@@ -23,7 +23,7 @@
                 <v-card-text>
                   <v-sheet :height="displayHeight" class="overflow-auto">
                     <v-list two-line>
-                      <div v-if="roleView.adminDisplayList">
+                      <div v-if="roleView.adminDisplayList && roleView.adminDisplayList.length !== 0">
                         <v-list-item-group>
                           <v-list-item
                               v-for="adminItem in roleView.adminDisplayList"

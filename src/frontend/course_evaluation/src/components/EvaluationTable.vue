@@ -50,7 +50,7 @@ export default {
         value: "studentName"
       }
     ],
-    resultListDisplay: [{
+    resultDisplayList: [{
       id: 1,
       courseName: "数值分析",
       praise: "老师很好",
@@ -90,7 +90,7 @@ export default {
 
       this.resultList = resp.data['data'];
 
-      this.resultListDisplay = this.resultList
+      this.resultDisplayList = this.resultList
           .map(e => {
             const newElement = {
               id: e.id,
