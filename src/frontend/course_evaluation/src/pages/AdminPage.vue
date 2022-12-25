@@ -99,7 +99,7 @@
                           </v-list-item-content>
 
                           <v-list-item-action>
-                            <v-btn icon>
+                            <v-btn @click="removeTeacher(teacherItem.id)" icon>
                               <v-icon color="error">mdi-delete</v-icon>
                             </v-btn>
                           </v-list-item-action>
@@ -160,7 +160,7 @@
                           </v-list-item-content>
 
                           <v-list-item-action>
-                            <v-btn icon>
+                            <v-btn @click="removeStudent(studentItem.id)" icon>
                               <v-icon color="error">mdi-delete</v-icon>
                             </v-btn>
                           </v-list-item-action>
@@ -729,6 +729,24 @@ export default {
       }
 
       this.roleView.dialog.addDialog = false;
+    },
+    removeTeacher: async function (id) {
+      const resp = await requestHelper.delete(`/teacher/${id}`);
+      if (resp['status'] >= 300) {
+        alert("删除失败" + JSON.stringify(resp));
+      } else {
+        this.roleView.teacherDisplayList.splice(
+            this.roleView.teacherDisplayList.findIndex(x => x.id === id), 1);
+      }
+    },
+    removeStudent: async function (id) {
+      const resp = await requestHelper.delete(`/student/${id}`);
+      if (resp['status'] >= 300) {
+        alert("删除失败" + JSON.stringify(resp));
+      } else {
+        this.roleView.studentDisplayList.splice(
+            this.roleView.studentDisplayList.findIndex(x => x.id === id), 1);
+      }
     },
     findStudentNameById: function (id) {
       for (const student of this.roleView.studentDisplayList) {
