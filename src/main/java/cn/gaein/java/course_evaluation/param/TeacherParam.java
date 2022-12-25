@@ -7,8 +7,6 @@ public class TeacherParam {
     private String idNumber;
     private String name;
     private String phone;
-    private String sex;
-    private Integer age;
 
     public String getIdNumber() {
         return this.idNumber;
@@ -32,21 +30,5 @@ public class TeacherParam {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getSex() {
-        return this.sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public int getAge() {
-        return this.age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 }

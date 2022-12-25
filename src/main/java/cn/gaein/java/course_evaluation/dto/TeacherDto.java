@@ -13,8 +13,6 @@ public class TeacherDto {
     private String idNumber;
     private String name;
     private String phone;
-    private String sex;
-    private Integer age;
     private List<Long> courseIds;
 
     public TeacherDto() {
@@ -25,12 +23,10 @@ public class TeacherDto {
         this.idNumber = teacher.getIdNumber();
         this.name = teacher.getName();
         this.phone = teacher.getPhone();
-        this.sex = teacher.getPhone();
-        this.age = teacher.getAge();
         this.courseIds = new ArrayList<>();
         Set<Course> courses = teacher.getCourses();
         if (courses != null) {
-            for (Course course : courses) {
+            for (var course : courses) {
                 this.courseIds.add(course.getId());
             }
         }
@@ -66,22 +62,6 @@ public class TeacherDto {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getSex() {
-        return this.sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public Integer getAge() {
-        return this.age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public List<Long> getCourseIds() {

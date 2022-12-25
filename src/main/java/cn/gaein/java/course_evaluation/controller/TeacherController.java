@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/teacher")
 public class TeacherController {
-
     private final TeacherRepository repository;
-
     private final Response teacherNotFoundResponse = Response.notFound("Teacher not found");
     private final Response teacherIdNumberExistResponse = Response.badRequest("Teacher id number already exists");
 
@@ -56,8 +54,6 @@ public class TeacherController {
         teacher.setIdNumber(param.getIdNumber());
         teacher.setName(param.getName());
         teacher.setPhone(param.getPhone());
-        teacher.setSex(param.getSex());
-        teacher.setAge(param.getAge());
 
         repository.save(teacher);
         return Response.success(new TeacherDto(teacher));
@@ -89,8 +85,6 @@ public class TeacherController {
         teacher.setIdNumber(param.getIdNumber());
         teacher.setName(param.getName());
         teacher.setPhone(param.getPhone());
-        teacher.setSex(param.getSex());
-        teacher.setAge(param.getAge());
 
         repository.save(teacher);
         return Response.success(new TeacherDto(teacher));

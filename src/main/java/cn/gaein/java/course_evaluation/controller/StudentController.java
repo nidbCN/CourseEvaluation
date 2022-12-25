@@ -1,34 +1,22 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
-import javax.servlet.http.HttpSession;
-
 import cn.gaein.java.course_evaluation.dto.StudentDto;
 import cn.gaein.java.course_evaluation.entity.Student;
+import cn.gaein.java.course_evaluation.param.LoginParam;
 import cn.gaein.java.course_evaluation.param.StudentParam;
 import cn.gaein.java.course_evaluation.param.StudentRegisterParam;
 import cn.gaein.java.course_evaluation.repository.StudentRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
 import cn.gaein.java.course_evaluation.utils.HashUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/student")
 public class StudentController {
-
     private final StudentRepository repository;
 
     private final Response studentNotFoundResponse = Response.notFound("Student not found");
@@ -126,22 +114,22 @@ public class StudentController {
         );
     }
 
-    @GetMapping("login")
-    public Response login(@RequestParam String idNumber, @RequestParam String password) {
-        var student = repository.findByIdNumber(idNumber);
+    @PostMapping("/session")
+    public Response login(@RequestBody LoginParam param) {
+        var student = repository.findByIdNumber(param.getAccount());
 
         if (student == null) {
             return studentNotFoundResponse;
         }
 
-        if (!student.getPassword().equals(HashUtils.md5(password))) {
+        if (!student.getPassword().equals(HashUtils.md5(param.getPassword()))) {
             return Response.badRequest("Password is incorrect");
         }
 
         return Response.success(new StudentDto(student));
     }
 
-    @PostMapping("/register")
+    @PostMapping("/student/register")
     public Response registerStudent(HttpSession session, @RequestBody StudentRegisterParam param) {
         // check verify code
         var verifyCode = (String) session.getAttribute("verifyCode");

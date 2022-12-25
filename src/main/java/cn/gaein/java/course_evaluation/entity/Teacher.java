@@ -61,22 +61,6 @@ public class Teacher {
         this.phone = phone;
     }
 
-    public String getSex() {
-        return this.sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public Integer getAge() {
-        return this.age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
     public Set<Course> getCourses() {
         return this.courses;
     }

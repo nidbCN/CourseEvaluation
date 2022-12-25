@@ -1,25 +1,16 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import cn.gaein.java.course_evaluation.repository.AdminRepository;
-import cn.gaein.java.course_evaluation.responseHelper.Response;
-import cn.gaein.java.course_evaluation.utils.HashUtils;
-
-import java.util.stream.StreamSupport;
-
 import cn.gaein.java.course_evaluation.dto.AdminDto;
 import cn.gaein.java.course_evaluation.entity.Admin;
 import cn.gaein.java.course_evaluation.param.AdminParam;
-
+import cn.gaein.java.course_evaluation.param.LoginParam;
+import cn.gaein.java.course_evaluation.repository.AdminRepository;
+import cn.gaein.java.course_evaluation.responseHelper.Response;
+import cn.gaein.java.course_evaluation.utils.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/admin")
@@ -116,13 +107,13 @@ public class AdminController {
     }
 
     @PostMapping("/session")
-    public Response createSession(@RequestParam String username, @RequestParam String password) {
-        var admin = repository.findByUsername(username);
+    public Response createSession(@RequestBody LoginParam param) {
+        var admin = repository.findByUsername(param.getAccount());
 
         if (admin == null) {
             return adminNotFoundResponse;
         }
-        if (!admin.getPassword().equals(HashUtils.md5(password))) {
+        if (!admin.getPassword().equals(HashUtils.md5(param.getPassword()))) {
             return Response.badRequest("Wrong password");
         }
         return Response.success(new AdminDto(admin));
