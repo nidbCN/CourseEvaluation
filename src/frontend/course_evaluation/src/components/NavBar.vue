@@ -32,22 +32,32 @@
         absolute
         temporary
     >
-      <v-list
-          nav
-          dense
-      >
-        <v-list-item-group
-            v-model="group"
-            active-class="deep-purple--text text--accent-4"
-        >
-          <v-list-item v-for="(menuItem,i) in menu.menu" :key="i">
-            <v-list-item-icon>
-              <v-icon>{{ menuItem.icon }}</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+      <v-card height="100%">
+        <v-img
+            class="white--text align-end"
+            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+            :src="require('@/assets/picture.webp')">
+          <v-card-title v-text="title"></v-card-title>
+        </v-img>
+        <v-card-text>
+          <v-list
+              nav
+              dense
+          >
+            <v-list-item-group
+                v-model="menu.menu"
+                active-class="deep-purple--text text--accent-4"
+            >
+              <v-list-item v-for="(menuItem,i) in menu.menu" :key="i">
+                <v-list-item-icon>
+                  <v-icon>{{ menuItem.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card-text>
+      </v-card>
     </v-navigation-drawer>
   </div>
 </template>
