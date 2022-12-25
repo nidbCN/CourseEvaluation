@@ -72,7 +72,7 @@
 
 <script>
 import {task} from "@vue/cli-plugin-eslint/ui/taskDescriptor";
-import axios from "axios";
+import requestHelper from "@/request";
 
 export default {
   name: "StudentPage",
@@ -133,11 +133,10 @@ export default {
     },
     fetchTasks: async function (studentId) {
       console.log(studentId);
-      const resp = await axios.get("/evaluation/student/", {params: studentId});
+      const resp = await requestHelper.get(`/evaluation/student/${studentId}`);
 
-      console.log(resp);
-
-      console.log(this.taskView.taskList[0].questions.length);
+      console.log(resp.data['data']);
+      this.taskView.taskList = resp.data['data'];
 
       this.taskView.taskDisplayList = this.taskView.taskList.map(e => ({
         id: e.id,
@@ -152,7 +151,7 @@ export default {
     }
   },
   mounted() {
-    // this.fetchTasks(0);
+    this.fetchTasks(4);
   }
 }
 </script>
