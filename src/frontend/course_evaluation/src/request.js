@@ -42,7 +42,7 @@ requestHelper.interceptors.response.use(
         //     return res
         // }
 
-        console.debug("DEBUG:" + res);
+        console.debug("DEBUG:" + JSON.stringify(res));
 
         return res;
     },

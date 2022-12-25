@@ -17,16 +17,16 @@
           ></v-select>
 
           <v-text-field
-              v-model="form.username"
+              v-model="form.account"
               label="账号"
-              required
+              :rules="[form.rules.required]"
           ></v-text-field>
 
           <v-text-field
               v-model="form.password"
               label="密码"
               type="password"
-              required
+              :rules="[form.rules.required]"
           ></v-text-field>
         </v-form>
       </v-card-text>
@@ -50,33 +50,52 @@
 </template>
 
 <script>
-import {homePage} from "@/router";
-import axios from "axios";
+import {adminPage, studentPage} from "@/router";
+import requestHelper from "@/request";
+import storage from "@/storage";
+import rules from '@/util/validate'
 
 export default {
   name: "LoginPage",
   data: () => ({
     form: {
+      rules: rules,
       role: '学生',
-      username: '',
+      account: '',
       password: ''
     },
     options: {
-      items: ['学生', '老师', '管理员']
+      items: ['学生', '管理员']
     }
   }),
   methods: {
     handleReset: function () {
       this.form = {
         role: '学生',
-        username: '',
+        account: '',
         password: ''
       }
     },
     handleLogin: async function () {
-      const resp = await axios.post("/login", this.form);
-      if (resp.status === 200) {
-        await this.$router.push({name: homePage.name})
+      if (this.form.role === "学生") {
+        const resp = await requestHelper.post("/student/session", this.form);
+
+        if (resp['status'] === 200) {
+          // 登录成功
+          storage['studentId'] = resp['data']['id'];
+          await this.$router.push({name: studentPage.name})
+        } else {
+          alert("登录失败" + JSON.stringify(resp));
+        }
+      } else if (this.form.role === "管理员") {
+        const resp = await requestHelper.post("/admin/session", this.form);
+        if (resp['status'] === 200) {
+          // 登录成功
+          storage['adminId'] = resp['data']['id'];
+          await this.$router.push({name: adminPage.name})
+        } else {
+          alert("登录失败" + JSON.stringify(resp));
+        }
       }
     }
   }

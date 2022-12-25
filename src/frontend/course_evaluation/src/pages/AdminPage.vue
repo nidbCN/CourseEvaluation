@@ -361,54 +361,54 @@ export default {
       adminDisplayList: [{
         id: 1,
         name: "系统管理",
-        username: "admin"
+        account: "admin"
       },
         {
           id: 2,
           name: "于一",
-          username: "yu1"
+          account: "yu1"
         }],
       teacherDisplayList: [{
         id: 1,
         idNumber: 2007112,
         name: "柴锐",
         phone: "19945458763",
-        username: "cherry"
+        account: "cherry"
       },
         {
           id: 2,
           idNumber: 2007212,
           name: "许颜杰",
           phone: "19942228763",
-          username: "xyj"
+          account: "xyj"
         },
         {
           id: 3,
           idNumber: 2007212,
           name: "于一",
           phone: "19942228763",
-          username: "yu1"
+          account: "yu1"
         },
         {
           id: 4,
           idNumber: 2007212,
           name: "秦品乐",
           phone: "19942228763",
-          username: "pyl"
+          account: "pyl"
         }],
       studentDisplayList: [{
         id: 1,
         idNumber: 2007040134,
         name: "丁燕伟",
         phone: "19945458763",
-        username: "dyw"
+        account: "dyw"
       },
         {
           id: 2,
           idNumber: 2007040124,
           name: "郭忠昊",
           phone: "19945458763",
-          username: "yuan_pi"
+          account: "yuan_pi"
         }],
     },
     courseView: {
