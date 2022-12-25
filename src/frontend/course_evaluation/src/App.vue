@@ -3,7 +3,7 @@
     <div class="overflow-hidden">
       <nav-bar title="学生评教系统"/>
       <v-main>
-        <div style="margin-top: 160px">
+        <div style="margin-top: 160px; min-height: 75vh">
           <transition>
             <router-view></router-view>
           </transition>
@@ -12,7 +12,7 @@
     </div>
     <v-footer
         color="primary"
-        padless
+        :padless="true"
     >
       <v-row
           justify="center"
