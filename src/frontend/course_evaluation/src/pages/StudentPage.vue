@@ -87,6 +87,7 @@
 <script>
 import storage from "@/storage";
 import requestHelper from "@/request";
+import {loginPage} from "@/router";
 
 export default {
   name: "StudentPage",
@@ -199,9 +200,10 @@ export default {
     }
   },
   mounted() {
-    storage['studentId'] = 4;
-
-    this.fetchTasks(storage['studentId']);
+    if (storage['role'] === "admin") {
+      this.$router.push({name: loginPage.name});
+    }
+    this.fetchTasks(storage['info']['id']);
   }
 }
 </script>

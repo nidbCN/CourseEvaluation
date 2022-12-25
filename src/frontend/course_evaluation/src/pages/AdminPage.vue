@@ -423,6 +423,8 @@
 <script>
 import EvaluationTable from "@/components/EvaluationTable.vue";
 import requestHelper from "@/request";
+import storage from "@/storage";
+import {loginPage} from "@/router";
 
 export default {
   name: "AdminPage",
@@ -757,6 +759,10 @@ export default {
     }
   },
   async mounted() {
+    if (storage['role'] !== "admin") {
+      await this.$router.push({name: loginPage.name})
+    }
+
     await this.fetchAdmin();
     this.fetchTeacher()
         .then((resp) => {

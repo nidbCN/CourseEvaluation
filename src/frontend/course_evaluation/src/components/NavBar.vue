@@ -45,11 +45,12 @@
             <v-list-item-group
                 active-class="deep-purple--text text--accent-4"
             >
-              <v-list-item v-for="(menuItem,i) in menu.menu" :key="i">
-                <v-list-item-icon>
-                  <v-icon>{{ menuItem.icon }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>{{ menuItem.title }}</v-list-item-title>
+              <v-list-item
+                  @click="$router.push({name: storage['role'] === 'admin' ? adminPage.name : studentPage.name}) ">
+                <v-list-item-title>首页</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="$router.push({name: loginPage.name})">
+                <v-list-item-title>退出</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>
@@ -60,15 +61,29 @@
 </template>
 
 <script>
-import Menu from "@/util/menu";
+import {adminPage, loginPage, studentPage} from "@/router";
+import storage from "@/storage";
 
 export default {
   name: "NavBar",
+  computed: {
+    studentPage() {
+      return studentPage
+    },
+    adminPage() {
+      return adminPage
+    },
+    storage() {
+      return storage
+    },
+    loginPage() {
+      return loginPage
+    }
+  },
   props: {
     title: String
   },
   data: () => ({
-    menu: Menu,
     drawer: false
   }),
 }

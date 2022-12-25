@@ -82,7 +82,8 @@ export default {
 
         if (resp['status'] === 200) {
           // 登录成功
-          storage['studentId'] = resp['data']['id'];
+          storage['role'] = "student";
+          storage['info'] = resp['data'];
           await this.$router.push({name: studentPage.name})
         } else {
           alert("登录失败" + JSON.stringify(resp));
@@ -91,7 +92,8 @@ export default {
         const resp = await requestHelper.post("/admin/session", this.form);
         if (resp['status'] === 200) {
           // 登录成功
-          storage['adminId'] = resp['data']['id'];
+          storage['role'] = "admin";
+          storage['info'] = resp['data'];
           await this.$router.push({name: adminPage.name})
         } else {
           alert("登录失败" + JSON.stringify(resp));
