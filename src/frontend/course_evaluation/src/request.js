@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // create an axios instance
 const requestHelper = axios.create({
-    baseURL: "http://localhost:8080/", // url = base url + request url
+    baseURL: "http://192.168.8.4/", // url = base url + request url
     timeout: 5000 // request timeout
 })
 
@@ -15,7 +15,7 @@ requestHelper.interceptors.request.use(
     },
     error => {
         // do something with request error
-        console.log(error) // for debug
+        console.error(error) // for debug
         return Promise.reject(error)
     }
 )
@@ -36,11 +36,15 @@ requestHelper.interceptors.response.use(
         const res = response.data
 
         // if the custom code is not 20000, it is judged as an error.
-        if (res.code !== 200) {
-            console.log("error with non-200 code:" + JSON.stringify(res));
-        } else {
-            return res
-        }
+        // if (res.data['status'] !== 200) {
+        //     console.log("error with non-200 code:" + JSON.stringify(res));
+        // } else {
+        //     return res
+        // }
+
+        console.debug("DEBUG:" + res);
+
+        return res;
     },
     error => {
         console.log('err' + error) // for debug
