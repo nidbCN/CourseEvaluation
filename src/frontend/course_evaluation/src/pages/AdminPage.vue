@@ -327,7 +327,7 @@
         </v-card-title>
 
         <v-card-text>
-
+          <evaluation-table :course-id="resultView.selectCourse.id"/>
         </v-card-text>
 
         <v-divider></v-divider>
@@ -349,9 +349,11 @@
 
 <script>
 import axios from "axios";
+import EvaluationTable from "@/components/EvaluationTable.vue";
 
 export default {
   name: "AdminPage",
+  components: {EvaluationTable},
   data: () => ({
     displayHeight: 304,
     roleView: {
@@ -471,17 +473,9 @@ export default {
       },
     },
     resultView: {
+      resultHeader: [],
       resultDialog: false,
       selectCourse: -1,
-      resultDict: {
-        1: [{
-          id: 1,
-          praiseId: -1,
-          questionIds: [1, 2, 3],
-          studentId: 1,
-          courseId: 1
-        }],
-      }
     }
   }),
   methods: {
