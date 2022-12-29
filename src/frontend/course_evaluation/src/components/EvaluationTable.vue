@@ -1,7 +1,7 @@
 <template>
   <v-data-table
       :headers="resultHeader"
-      :items="resultList"
+      :items="resultDisplayList"
       :items-per-page="5"
       :search="keyword"
       sort-by="id"
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import requestHelper from "@/request";
 
 export default {
   name: "EvaluationTable",
@@ -35,7 +35,7 @@ export default {
       },
       {
         text: "问题",
-        value: "questionsDisplay"
+        value: "questionDisplay"
       },
       {
         text: "总分",
@@ -54,7 +54,7 @@ export default {
       id: 1,
       courseName: "数值分析",
       praise: "老师很好",
-      questionsDisplay: "问题id2: 99\n问题xxx",
+      questionDisplay: "问题id2: 99\n问题xxx",
       studentName: "康萱琪",
       avgScore: 99,
       totalScore: 990,
@@ -82,37 +82,41 @@ export default {
   },
   methods: {
     fetchResult: async function () {
-      const resp = await axios.get("/evaluation");
-      if (resp.status >= 300) {
-        console.error("请求错误");
-        return;
+      const id = this.courseId;
+
+      const resp = await requestHelper.get(`/evaluation/course/${id}`);
+      if (resp['status'] >= 300) {
+        alert("请求错误" + JSON.stringify(resp))
+      } else {
+        this.resultList = resp['data'];
+
+        this.resultDisplayList = this.resultList
+            .map(e => {
+              const newElement = {
+                id: e.id,
+                courseName: e.course.title,
+                praise: e.praise.content,
+                questionDisplay: "",
+                studentName: e.student.name,
+                avgScore: 0,
+                totalScore: 0,
+              };
+
+              // 分数计算
+              newElement.totalScore = e.questions
+                  .map(question => question.score)
+                  .reduce((prev, item) => prev + item);
+              newElement.avgScore = newElement.totalScore / e.questions.length;
+
+              // 问题显示
+              newElement.questionDisplay = e.questions
+                  .map(question => `${question.content}: ${question.score}`)
+                  .join("\n");
+
+              console.log(newElement)
+              return newElement;
+            })
       }
-
-      this.resultList = resp.data['data'];
-
-      this.resultDisplayList = this.resultList
-          .map(e => {
-            const newElement = {
-              id: e.id,
-              courseName: e.course.title,
-              praise: e.praise.content,
-              questionDisplay: "",
-              studentName: e.student.name,
-              avgScore: 0,
-              totalScore: 0,
-            };
-
-            // 分数计算
-            newElement.totalScore = e.questions
-                .map(question => question.score)
-                .reduce((prev, item) => prev + item);
-            newElement.avgScore = newElement.totalScore / e.questions.length;
-
-            // 问题显示
-            newElement.questionDisplay = e.questions
-                .map(question => `${question.content}: ${question.score}`)
-                .join("\n");
-          })
     }
   }
 }

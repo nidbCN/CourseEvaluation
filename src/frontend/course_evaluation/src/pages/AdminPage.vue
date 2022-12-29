@@ -41,12 +41,6 @@
                               <v-list-item-title v-text="adminItem.name"></v-list-item-title>
                               <v-list-item-subtitle v-text="adminItem.username"></v-list-item-subtitle>
                             </v-list-item-content>
-
-                            <v-list-item-action>
-                              <v-btn icon>
-                                <v-icon color="error">mdi-delete</v-icon>
-                              </v-btn>
-                            </v-list-item-action>
                           </v-list-item>
                         </v-list-item-group>
                       </div>
@@ -75,6 +69,10 @@
               <v-card outlined>
                 <v-card-title>
                   老师
+                  <v-spacer></v-spacer>
+                  <v-btn @click="openAddRole('老师')" icon>
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
                 </v-card-title>
                 <v-card-text>
                   <v-sheet :height="displayHeight" class="overflow-auto">
@@ -97,11 +95,11 @@
                                 v-text="`${teacherItem.name} (${teacherItem.idNumber})`"></v-list-item-title>
 
                             <v-list-item-subtitle
-                                v-text="`${teacherItem.username}: ${teacherItem.phone}`"></v-list-item-subtitle>
+                                v-text="teacherItem.phone"></v-list-item-subtitle>
                           </v-list-item-content>
 
                           <v-list-item-action>
-                            <v-btn icon>
+                            <v-btn @click="removeTeacher(teacherItem.id)" icon>
                               <v-icon color="error">mdi-delete</v-icon>
                             </v-btn>
                           </v-list-item-action>
@@ -132,6 +130,10 @@
               <v-card outlined>
                 <v-card-title>
                   学生
+                  <v-spacer></v-spacer>
+                  <v-btn @click="openAddRole('学生')" icon>
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
                 </v-card-title>
                 <v-card-text>
                   <v-sheet :height="displayHeight" class="overflow-auto">
@@ -154,11 +156,11 @@
                                 v-text="`${studentItem.name} (${studentItem.idNumber})`"></v-list-item-title>
 
                             <v-list-item-subtitle
-                                v-text="`${studentItem.username}: ${studentItem.phone}`"></v-list-item-subtitle>
+                                v-text="studentItem.phone"></v-list-item-subtitle>
                           </v-list-item-content>
 
                           <v-list-item-action>
-                            <v-btn icon>
+                            <v-btn @click="removeStudent(studentItem.id)" icon>
                               <v-icon color="error">mdi-delete</v-icon>
                             </v-btn>
                           </v-list-item-action>
@@ -182,13 +184,55 @@
                       </div>
                     </v-list>
                   </v-sheet>
-
                 </v-card-text>
               </v-card>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
+
+      <v-dialog v-model="roleView.dialog.addDialog" max-width="500px">
+        <v-card>
+          <v-card-title>新建角色</v-card-title>
+          <v-card-text>
+            <v-form>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                      label="学工号"
+                      v-model="roleView.newItem.idNumber">
+                  </v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                      label="姓名"
+                      v-model="roleView.newItem.name">
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="6">
+                  <v-text-field
+                      label="手机"
+                      v-model="roleView.newItem.phone">
+                  </v-text-field>
+                </v-col>
+                <v-col v-if="roleView.newItem.role === '学生'" cols="6">
+                  <v-text-field
+                      type="password"
+                      label="密码"
+                      v-model="roleView.newItem.password">
+                  </v-text-field>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn color="primary" @click="addRole">保存</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
     </v-container>
     <v-container>
       <v-card>
@@ -207,7 +251,7 @@
           <v-data-table
               :height="displayHeight"
               :headers="courseView.courseHeader"
-              :items="courseView.courseList"
+              :items="courseView.courseDisplayList"
               :items-per-page="5"
               :search="courseView.keyword"
               sort-by="id"
@@ -274,6 +318,35 @@
                           </v-col>
                         </v-row>
                       </v-container>
+                      <v-container>
+                        <v-row>
+                          <v-col cols="3">
+                            学生列表
+                          </v-col>
+                          <v-col offset="2" cols="4">
+                            <v-select v-model="courseView.editedStudentSelect"
+                                      item-value="id"
+                                      item-text="name"
+                                      :items="roleView.studentDisplayList">
+
+                            </v-select>
+                          </v-col>
+                          <v-col cols="2">
+                            <v-btn icon
+                                   @click="addStudentToCourse">
+                              <v-icon>mdi-plus</v-icon>
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+
+                        <v-row>
+                          <v-data-table
+                              :items="courseView.editedStudentList"
+                              :headers="courseView.editedStudentHeader"
+                          >
+                          </v-data-table>
+                        </v-row>
+                      </v-container>
                     </v-card-text>
 
                     <v-card-actions>
@@ -312,6 +385,13 @@
                 >mdi-delete
                 </v-icon>
               </v-btn>
+              <v-btn icon @click="addEvaluation(item)">
+                <v-icon
+                    small
+                    color="primary">
+                  mdi-file-chart
+                </v-icon>
+              </v-btn>
             </template>
           </v-data-table>
         </v-card-text>
@@ -348,8 +428,10 @@
 </template>
 
 <script>
-import axios from "axios";
 import EvaluationTable from "@/components/EvaluationTable.vue";
+import requestHelper from "@/request";
+import storage from "@/storage";
+import {loginPage} from "@/router";
 
 export default {
   name: "AdminPage",
@@ -358,58 +440,72 @@ export default {
     displayHeight: 304,
     roleView: {
       keyword: "",
-      adminDisplayList: [{
-        id: 1,
-        name: "系统管理",
-        username: "admin"
+      adminDisplayList: [
+        // {
+        //   id: 1,
+        //   name: "系统管理",
+        //   account: "admin"
+        // },
+        // {
+        //   id: 2,
+        //   name: "于一",
+        //   account: "yu1"
+        // }
+      ],
+      teacherDisplayList: [
+        // {
+        //   id: 1,
+        //   idNumber: 2007112,
+        //   name: "柴锐",
+        //   phone: "19945458763",
+        //   account: "cherry"
+        // },
+        // {
+        //   id: 2,
+        //   idNumber: 2007212,
+        //   name: "许颜杰",
+        //   phone: "19942228763",
+        //   account: "xyj"
+        // },
+        // {
+        //   id: 3,
+        //   idNumber: 2007212,
+        //   name: "于一",
+        //   phone: "19942228763",
+        //   account: "yu1"
+        // },
+        // {
+        //   id: 4,
+        //   idNumber: 2007212,
+        //   name: "秦品乐",
+        //   phone: "19942228763",
+        //   account: "pyl"
+        // }
+      ],
+      studentDisplayList: [
+        // {
+        //   id: 1,
+        //   idNumber: 2007040134,
+        //   name: "丁燕伟",
+        //   phone: "19945458763",
+        //   account: "dyw"
+        // },
+        // {
+        //   id: 2,
+        //   idNumber: 2007040124,
+        //   name: "郭忠昊",
+        //   phone: "19945458763",
+        //   account: "yuan_pi"
+        // }
+      ],
+      newItem: {
+        idNumber: "",
+        name: "",
+        phone: ""
       },
-        {
-          id: 2,
-          name: "于一",
-          username: "yu1"
-        }],
-      teacherDisplayList: [{
-        id: 1,
-        idNumber: 2007112,
-        name: "柴锐",
-        phone: "19945458763",
-        username: "cherry"
-      },
-        {
-          id: 2,
-          idNumber: 2007212,
-          name: "许颜杰",
-          phone: "19942228763",
-          username: "xyj"
-        },
-        {
-          id: 3,
-          idNumber: 2007212,
-          name: "于一",
-          phone: "19942228763",
-          username: "yu1"
-        },
-        {
-          id: 4,
-          idNumber: 2007212,
-          name: "秦品乐",
-          phone: "19942228763",
-          username: "pyl"
-        }],
-      studentDisplayList: [{
-        id: 1,
-        idNumber: 2007040134,
-        name: "丁燕伟",
-        phone: "19945458763",
-        username: "dyw"
-      },
-        {
-          id: 2,
-          idNumber: 2007040124,
-          name: "郭忠昊",
-          phone: "19945458763",
-          username: "yuan_pi"
-        }],
+      dialog: {
+        addDialog: false
+      }
     },
     courseView: {
       keyword: "",
@@ -431,35 +527,35 @@ export default {
           value: "actions"
         }
       ],
-      courseList: [
-        {
-          id: 0,
-          title: "Java程序设计",
-          description: "j v a v 哈哈哈哈 j v a v",
-          teacherId: 3,
-          teacherName: "于一",
-        },
-        {
-          id: 1,
-          title: "数值分析",
-          description: "头疼的课",
-          teacherId: 4,
-          teacherName: "秦品乐",
-        },
-        {
-          id: 2,
-          title: "高等数学",
-          teacherId: 4,
-          description: "头疼的课",
-          teacherName: "abc",
-        },
-        {
-          id: 3,
-          title: "线性代数",
-          teacherId: 4,
-          description: "头疼的课",
-          teacherName: "sss",
-        },
+      courseDisplayList: [
+        // {
+        //   id: 0,
+        //   title: "Java程序设计",
+        //   description: "j v a v 哈哈哈哈 j v a v",
+        //   teacherId: 3,
+        //   teacherName: "于一",
+        // },
+        // {
+        //   id: 1,
+        //   title: "数值分析",
+        //   description: "头疼的课",
+        //   teacherId: 4,
+        //   teacherName: "秦品乐",
+        // },
+        // {
+        //   id: 2,
+        //   title: "高等数学",
+        //   teacherId: 4,
+        //   description: "头疼的课",
+        //   teacherName: "abc",
+        // },
+        // {
+        //   id: 3,
+        //   title: "线性代数",
+        //   teacherId: 4,
+        //   description: "头疼的课",
+        //   teacherName: "sss",
+        // },
       ],
       dialog: {
         editDialog: false,
@@ -470,7 +566,14 @@ export default {
         title: "",
         description: "",
         teacherId: -1,
+        studentIds: [],
       },
+      editedStudentSelect: -1,
+      editedStudentList: [],
+      editedStudentHeader: [
+        {text: '序号', value: 'id'},
+        {text: '姓名', value: 'name'}
+      ]
     },
     resultView: {
       resultHeader: [],
@@ -479,17 +582,62 @@ export default {
     }
   }),
   methods: {
+    fetchAdmin: async function () {
+      const resp = await requestHelper.get("/admin");
+      this.roleView.adminDisplayList = resp['data'];
+    },
+    fetchTeacher: async function () {
+      const resp = await requestHelper.get("/teacher");
+      this.roleView.teacherDisplayList = resp['data'];
+
+      return resp['data'];
+    },
+    fetchStudent: async function () {
+      const resp = await requestHelper.get("/student");
+      this.roleView.studentDisplayList = resp['data'];
+    },
+    fetchCourse: async function () {
+      for (const teacher of this.roleView.teacherDisplayList) {
+        const resp = await requestHelper.get(`/course/teacher/`, {
+          params: {
+            teacherId: teacher.id
+          }
+        });
+
+        const courseItem = resp['data'];
+        courseItem.forEach(e => e['teacherName'] = teacher.name);
+
+        console.log(courseItem);
+
+        this.courseView.courseDisplayList = this.courseView.courseDisplayList.concat(courseItem);
+      }
+    },
     openAddCourse: function () {
       this.courseView.editedItem = {
         id: -1,
         title: "",
         description: "",
         teacherId: -1,
+        studentIds: []
       };
+
+      this.courseView.editedStudentList = [];
+      this.courseView.editedStudentSelect = -1;
     },
     openEditCourse: function (item) {
       // copy item
       this.courseView.editedItem = structuredClone(item);
+
+      this.courseView.editedStudentList = this.courseView.editedItem.studentIds.map(id => {
+        for (const studentItem of this.roleView.studentDisplayList) {
+          if (studentItem.id === id) {
+            return {
+              id: id,
+              name: studentItem.name
+            }
+          }
+        }
+      });
 
       this.courseView.dialog.editDialog = true;
     },
@@ -498,24 +646,31 @@ export default {
       this.resultView.resultDialog = true;
     },
     saveCourse: async function () {
-      const index = this.courseView.courseList.findIndex(
+      const index = this.courseView.courseDisplayList.findIndex(
           x => x.id === this.courseView.editedItem.id);
       if (index === -1) {
         // 新增
-        const resp = await axios.post("/course");
-        console.log(resp);
+        const resp = await requestHelper.post("/course", {
+          description: this.courseView.editedItem.description,
+          title: this.courseView.editedItem.title,
+          teacherId: this.courseView.editedItem.teacherId
+        });
 
-        this.courseView.editedItem["teacherName"]
+        if (resp['status'] >= 300) {
+          alert("新增失败" + JSON.stringify(resp));
+        }
+
+        const courseItem = resp['data'];
+        courseItem["teacherName"]
             = this.roleView.teacherDisplayList
-            .find(x => x.id === this.courseView.editedItem.teacherId)
+            .find(x => x.id === courseItem.teacherId)
             .name;
 
-        // noinspection JSCheckFunctionSignatures
-        this.courseView.courseList.push(
-            this.courseView.editedItem);
+        this.courseView.courseDisplayList.push(
+            courseItem);
       } else {
         // 修改
-        const oldItem = this.courseView.courseList[index];
+        const oldItem = this.courseView.courseDisplayList[index];
         oldItem.title = this.courseView.editedItem.title;
         oldItem.description = this.courseView.editedItem.description;
         oldItem.teacherId = this.courseView.editedItem.teacherId;
@@ -526,10 +681,113 @@ export default {
 
       this.courseView.dialog.editDialog = false;
     },
-    deleteCourse: function (item) {
-      this.courseView.courseList.splice(
-          this.courseView.courseList.indexOf(item), 1);
+    deleteCourse: async function (item) {
+      const resp = await requestHelper.delete(`/course/${item.id}`);
+
+      if (resp['status'] >= 300) {
+        alert("删除失败" + JSON.stringify(resp))
+      }
+
+      this.courseView.courseDisplayList.splice(
+          this.courseView.courseDisplayList.indexOf(item), 1);
     },
+    addStudentToCourse: async function () {
+      const studentId = this.courseView.editedStudentSelect;
+
+      console.log(this.courseView.editedStudentList.find(x => x.id == studentId))
+      if (this.courseView.editedStudentList.findIndex(x => x.id == studentId) === -1) {
+        // 无重复
+        const resp = await requestHelper.post(`/course/${this.courseView.editedItem.id}/student?studentId=${studentId}`);
+        if (resp['status'] >= 300) {
+          alert("添加错误" + JSON.stringify(resp));
+        } else {
+          const student = {
+            id: studentId,
+            name: this.findStudentNameById(studentId),
+          };
+
+          this.courseView.editedStudentList.push(student);
+        }
+      }
+    },
+    openAddRole: function (role) {
+      this.roleView.dialog.addDialog = true;
+      this.roleView.newItem = {
+        role: role,
+        idNumber: "",
+        name: "",
+        phone: "",
+        password: ""
+      };
+    },
+    addRole: async function () {
+      if (this.roleView.newItem.role === "老师") {
+        const resp = await requestHelper.post("/teacher", this.roleView.newItem);
+        if (resp['status'] >= 300) {
+          alert("新建错误" + JSON.stringify(resp));
+        } else {
+          this.roleView.teacherDisplayList.push(resp['data']);
+        }
+      } else if (this.roleView.newItem.role === "学生") {
+        const resp = await requestHelper.post("/student", this.roleView.newItem);
+        if (resp['status'] >= 300) {
+          alert("新建错误" + JSON.stringify(resp));
+        } else {
+          this.roleView.studentDisplayList.push(resp['data']);
+        }
+      }
+
+      this.roleView.dialog.addDialog = false;
+    },
+    removeTeacher: async function (id) {
+      const resp = await requestHelper.delete(`/teacher/${id}`);
+      if (resp['status'] >= 300) {
+        alert("删除失败" + JSON.stringify(resp));
+      } else {
+        this.roleView.teacherDisplayList.splice(
+            this.roleView.teacherDisplayList.findIndex(x => x.id === id), 1);
+      }
+    },
+    removeStudent: async function (id) {
+      const resp = await requestHelper.delete(`/student/${id}`);
+      if (resp['status'] >= 300) {
+        alert("删除失败" + JSON.stringify(resp));
+      } else {
+        this.roleView.studentDisplayList.splice(
+            this.roleView.studentDisplayList.findIndex(x => x.id === id), 1);
+      }
+    },
+    addEvaluation: function (courseItem) {
+      requestHelper.get(`/course/${courseItem.id}/students`)
+          .then(async stuResp => {
+            for (const studentItem of stuResp['data']) {
+              await requestHelper.post("/evaluation", {
+                courseId: courseItem.id,
+                studentId: studentItem.id
+              });
+            }
+          });
+    },
+    findStudentNameById: function (id) {
+      for (const student of this.roleView.studentDisplayList) {
+        if (student.id == id) {
+          return student.name;
+        }
+      }
+    }
+  },
+  async mounted() {
+    if (storage['role'] !== "admin") {
+      await this.$router.push({name: loginPage.name})
+    }
+
+    await this.fetchAdmin();
+    this.fetchTeacher()
+        .then((resp) => {
+          console.log(resp);
+          this.fetchCourse()
+        });
+    await this.fetchStudent();
   }
 }
 </script>
