@@ -37,8 +37,8 @@ public class AdminController {
         }
 
         return Response.success(
-            StreamSupport.stream(adminList.spliterator(), false)
-                .map(AdminDto::new));
+                StreamSupport.stream(adminList.spliterator(), false)
+                        .map(AdminDto::new));
     }
 
     @PostMapping("")
@@ -61,8 +61,8 @@ public class AdminController {
         var admin = repository.findById(id);
 
         return admin == null
-            ? adminNotFoundResponse
-            : Response.success(new AdminDto(admin));
+                ? adminNotFoundResponse
+                : Response.success(new AdminDto(admin));
     }
 
     @PutMapping("/{id}")
@@ -75,7 +75,7 @@ public class AdminController {
 
         // check if username exists
         if (repository.findByUsername(param.getUsername()) != null
-            && !admin.getUsername().equals(param.getUsername())) {
+                && !admin.getUsername().equals(param.getUsername())) {
             return userNameAlreadyExistsResponse;
         }
 

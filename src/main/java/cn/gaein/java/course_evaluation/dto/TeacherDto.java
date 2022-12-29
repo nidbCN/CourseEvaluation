@@ -1,11 +1,11 @@
 package cn.gaein.java.course_evaluation.dto;
 
+import cn.gaein.java.course_evaluation.entity.Course;
+import cn.gaein.java.course_evaluation.entity.Teacher;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import cn.gaein.java.course_evaluation.entity.Course;
-import cn.gaein.java.course_evaluation.entity.Teacher;
 
 public class TeacherDto {
 

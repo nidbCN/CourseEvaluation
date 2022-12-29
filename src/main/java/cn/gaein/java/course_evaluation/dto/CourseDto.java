@@ -1,12 +1,12 @@
 package cn.gaein.java.course_evaluation.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import cn.gaein.java.course_evaluation.entity.Course;
 import cn.gaein.java.course_evaluation.entity.Evaluation;
 import cn.gaein.java.course_evaluation.entity.Student;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class CourseDto {
 

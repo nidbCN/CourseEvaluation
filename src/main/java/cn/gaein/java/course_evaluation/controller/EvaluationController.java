@@ -1,21 +1,16 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 import cn.gaein.java.course_evaluation.dto.EvaluationDto;
-import cn.gaein.java.course_evaluation.entity.Course;
 import cn.gaein.java.course_evaluation.entity.Evaluation;
-import cn.gaein.java.course_evaluation.entity.Student;
 import cn.gaein.java.course_evaluation.param.EvaluationParam;
 import cn.gaein.java.course_evaluation.repository.CourseRepository;
 import cn.gaein.java.course_evaluation.repository.EvaluationRepository;
 import cn.gaein.java.course_evaluation.repository.StudentRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/evaluation")
@@ -30,7 +25,7 @@ public class EvaluationController {
     private final Response courseNotFoundResponse = Response.notFound("Course not found");
     private final Response studentNotInCourseResponse = Response.badRequest("Student not in course");
     private final Response studentAlreadyEvaluatedResponse = Response
-        .badRequest("Student has already evaluated this course");
+            .badRequest("Student has already evaluated this course");
 
     @Autowired
     public EvaluationController(EvaluationRepository repository, StudentRepository studentRepository,
@@ -46,8 +41,8 @@ public class EvaluationController {
         var evaluations = repository.findAll();
 
         return Response.success(
-            StreamSupport.stream(evaluations.spliterator(), false)
-                .map(EvaluationDto::new)
+                StreamSupport.stream(evaluations.spliterator(), false)
+                        .map(EvaluationDto::new)
         );
     }
 
@@ -156,7 +151,7 @@ public class EvaluationController {
         var evaluations = repository.findByStudentId(id);
 
         return Response.success(StreamSupport.stream(evaluations.spliterator(), false)
-            .map(EvaluationDto::new)
+                .map(EvaluationDto::new)
         );
     }
 
@@ -165,7 +160,7 @@ public class EvaluationController {
         var evaluations = repository.findByCourseId(id);
 
         return Response.success(StreamSupport.stream(evaluations.spliterator(), false)
-            .map(EvaluationDto::new)
+                .map(EvaluationDto::new)
         );
     }
 }

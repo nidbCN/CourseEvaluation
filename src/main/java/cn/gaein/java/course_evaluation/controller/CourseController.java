@@ -1,30 +1,19 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.stream.StreamSupport;
-
 import cn.gaein.java.course_evaluation.dto.CourseDto;
 import cn.gaein.java.course_evaluation.dto.StudentDto;
 import cn.gaein.java.course_evaluation.entity.Course;
-import cn.gaein.java.course_evaluation.entity.Student;
-import cn.gaein.java.course_evaluation.entity.Teacher;
 import cn.gaein.java.course_evaluation.param.CourseParam;
 import cn.gaein.java.course_evaluation.repository.CourseRepository;
 import cn.gaein.java.course_evaluation.repository.StudentRepository;
 import cn.gaein.java.course_evaluation.repository.TeacherRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/course")
@@ -69,8 +58,8 @@ public class CourseController {
         }
 
         return Response.success(
-            StreamSupport.stream(courses.spliterator(), false)
-                .map(CourseDto::new)
+                StreamSupport.stream(courses.spliterator(), false)
+                        .map(CourseDto::new)
         );
     }
 
@@ -96,8 +85,8 @@ public class CourseController {
     public Response getCourseById(@PathVariable("id") long id) {
         var course = repository.findById(id);
         return course == null
-            ? courseNotFoundResponse
-            : Response.success(new CourseDto(course));
+                ? courseNotFoundResponse
+                : Response.success(new CourseDto(course));
     }
 
     public Response updateCourse(@PathVariable("id") long id, @RequestBody CourseParam param) {
@@ -138,8 +127,8 @@ public class CourseController {
         var course = repository.findById(id);
 
         return course == null
-            ? courseNotFoundResponse
-            : Response.success();
+                ? courseNotFoundResponse
+                : Response.success();
     }
 
     @GetMapping("/{id}/students")
@@ -147,9 +136,9 @@ public class CourseController {
         var course = repository.findById(id);
 
         return course == null
-            ? courseNotFoundResponse
-            : Response.success(
-            course.students.stream().map(StudentDto::new)
+                ? courseNotFoundResponse
+                : Response.success(
+                course.students.stream().map(StudentDto::new)
         );
     }
 
@@ -195,8 +184,8 @@ public class CourseController {
         var courses = repository.findByTeacherId(teacherId);
 
         return Response.success(
-            StreamSupport.stream(courses.spliterator(), false)
-                .map(CourseDto::new)
+                StreamSupport.stream(courses.spliterator(), false)
+                        .map(CourseDto::new)
         );
     }
 
@@ -205,7 +194,7 @@ public class CourseController {
         var courses = repository.findByStudentId(studentId);
 
         return Response.success(
-            courses.stream().map(CourseDto::new)
+                courses.stream().map(CourseDto::new)
         );
     }
 }

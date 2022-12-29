@@ -32,8 +32,8 @@ public class StudentController {
         var students = repository.findAll();
 
         return Response.success(
-            StreamSupport.stream(students.spliterator(), false)
-                .map(StudentDto::new)
+                StreamSupport.stream(students.spliterator(), false)
+                        .map(StudentDto::new)
         );
     }
 
@@ -61,8 +61,8 @@ public class StudentController {
         var student = repository.findById(id);
 
         return student == null
-            ? studentNotFoundResponse
-            : Response.success(new StudentDto(student));
+                ? studentNotFoundResponse
+                : Response.success(new StudentDto(student));
     }
 
     @PutMapping("/{id}")
@@ -73,7 +73,7 @@ public class StudentController {
         }
         // check if idNumber exist
         if (repository.findByIdNumber(param.getIdNumber()) != null
-            && !student.getIdNumber().equals(param.getIdNumber())) {
+                && !student.getIdNumber().equals(param.getIdNumber())) {
             return studentIdNumberExistResponse;
         }
 
@@ -105,8 +105,8 @@ public class StudentController {
         var students = repository.findByName(name);
 
         return Response.success(
-            StreamSupport.stream(students.spliterator(), false)
-                .map(StudentDto::new)
+                StreamSupport.stream(students.spliterator(), false)
+                        .map(StudentDto::new)
         );
     }
 

@@ -1,7 +1,6 @@
 package cn.gaein.java.course_evaluation.repository;
 
 import cn.gaein.java.course_evaluation.entity.Course;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -18,8 +17,8 @@ public interface CourseRepository extends CrudRepository<Course, Long> {
     Iterable<Course> findByTeacherId(long teacherId);
 
     @Query(value = "select c.* from course c " +
-        "inner join course_students cs on cs.course_id = c.id " +
-        "inner join student s on cs.students_id = s.id " +
-        "where s.id = :studentId", nativeQuery = true)
+            "inner join course_students cs on cs.course_id = c.id " +
+            "inner join student s on cs.students_id = s.id " +
+            "where s.id = :studentId", nativeQuery = true)
     List<Course> findByStudentId(@Param("studentId") long studentId);
 }

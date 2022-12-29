@@ -6,28 +6,22 @@ import java.util.Set;
 @Entity
 public class Student {
 
+    @OneToMany(mappedBy = "student")
+    public Set<Evaluation> evaluations; // 评价
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id; // 主键
-
     @Column(length = 10, unique = true)
     private String idNumber; // 学号
-
     @Column(length = 10)
     private String name; // 姓名
-
     @Column(length = 11)
     private String phone; // 电话
-
     @Column
     private String email; // 邮箱
-
     @Column
     private String password; // 密码
-
-    @OneToMany(mappedBy = "student")
-    public Set<Evaluation> evaluations; // 评价
 
     public Long getId() {
         return this.id;

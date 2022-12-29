@@ -6,17 +6,14 @@ import java.util.Set;
 @Entity
 public class Evaluation {
 
+    @OneToMany(mappedBy = "evaluation")
+    public Set<Question> questions; // 问题
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id; // 主键
-
     @OneToOne(mappedBy = "evaluation")
     private Praise praise; // 评语
-
-    @OneToMany(mappedBy = "evaluation")
-    public Set<Question> questions; // 问题
-
     @ManyToOne
     @JoinColumn(nullable = false)
     private Student student; // 学生

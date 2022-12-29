@@ -1,19 +1,15 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 import cn.gaein.java.course_evaluation.dto.PraiseDto;
-import cn.gaein.java.course_evaluation.entity.Evaluation;
 import cn.gaein.java.course_evaluation.entity.Praise;
 import cn.gaein.java.course_evaluation.param.PraiseParam;
 import cn.gaein.java.course_evaluation.repository.EvaluationRepository;
 import cn.gaein.java.course_evaluation.repository.PraiseRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/praise")
@@ -37,8 +33,8 @@ public class PraiseController {
         var praises = repository.findAll();
 
         return Response.success(
-            StreamSupport.stream(praises.spliterator(), false)
-                .map(PraiseDto::new)
+                StreamSupport.stream(praises.spliterator(), false)
+                        .map(PraiseDto::new)
         );
     }
 
@@ -68,8 +64,8 @@ public class PraiseController {
         var praise = repository.findById(id);
 
         return praise == null
-            ? praiseNotFoundResponse
-            : Response.success(new PraiseDto(praise));
+                ? praiseNotFoundResponse
+                : Response.success(new PraiseDto(praise));
     }
 
     @PutMapping("/{id}")
@@ -119,7 +115,7 @@ public class PraiseController {
         var praise = repository.findByEvaluationId(evaluationId);
 
         return praise == null
-            ? praiseNotFoundResponse
-            : Response.success(new PraiseDto(praise));
+                ? praiseNotFoundResponse
+                : Response.success(new PraiseDto(praise));
     }
 }

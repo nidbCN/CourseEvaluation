@@ -1,7 +1,6 @@
 package cn.gaein.java.course_evaluation.repository;
 
 import cn.gaein.java.course_evaluation.entity.Question;
-
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,24 +1,14 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 import cn.gaein.java.course_evaluation.dto.TeacherDto;
 import cn.gaein.java.course_evaluation.entity.Teacher;
 import cn.gaein.java.course_evaluation.param.TeacherParam;
 import cn.gaein.java.course_evaluation.repository.TeacherRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/teacher")
@@ -37,8 +27,8 @@ public class TeacherController {
         var teachers = repository.findAll();
 
         return Response.success(
-            StreamSupport.stream(teachers.spliterator(), false)
-                .map(TeacherDto::new)
+                StreamSupport.stream(teachers.spliterator(), false)
+                        .map(TeacherDto::new)
         );
     }
 
@@ -64,8 +54,8 @@ public class TeacherController {
         var teacher = repository.findById(id);
 
         return teacher == null
-            ? teacherNotFoundResponse
-            : Response.success(new TeacherDto(teacher));
+                ? teacherNotFoundResponse
+                : Response.success(new TeacherDto(teacher));
     }
 
     @PostMapping("/{id}")
@@ -77,7 +67,7 @@ public class TeacherController {
 
         // check if idNumber exist
         if (repository.findByIdNumber(param.getIdNumber()) != null
-            && !teacher.getIdNumber().equals(param.getIdNumber())) {
+                && !teacher.getIdNumber().equals(param.getIdNumber())) {
             return teacherIdNumberExistResponse;
         }
 
@@ -107,8 +97,8 @@ public class TeacherController {
         var teachers = repository.findByName(name);
 
         return Response.success(
-            StreamSupport.stream(teachers.spliterator(), false)
-                .map(TeacherDto::new)
+                StreamSupport.stream(teachers.spliterator(), false)
+                        .map(TeacherDto::new)
         );
     }
 }

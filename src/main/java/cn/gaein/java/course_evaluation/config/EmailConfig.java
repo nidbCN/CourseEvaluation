@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
-@ComponentScan(basePackages = "com.aimerneige.course_evaluation.mail")
+@ComponentScan(basePackages = "cn.gaein.java.course_evaluation.mail")
 @PropertySource("classpath:application.yml")
 public class EmailConfig {
 

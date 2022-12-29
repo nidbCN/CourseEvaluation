@@ -6,26 +6,21 @@ import java.util.Set;
 @Entity
 public class Course {
 
+    @ManyToMany
+    public Set<Student> students; // 学生
+    @OneToMany(mappedBy = "course")
+    public Set<Evaluation> evaluations; // 评价
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id; // 主键
-
     @Column(length = 10)
     private String title; // 课程名称
-
     @Column(length = 256)
     private String description; // 课程描述
-
     @ManyToOne
     @JoinColumn(nullable = false)
     private Teacher teacher; // 教师
-
-    @ManyToMany
-    public Set<Student> students; // 学生
-
-    @OneToMany(mappedBy = "course")
-    public Set<Evaluation> evaluations; // 评价
 
     public Long getId() {
         return this.id;

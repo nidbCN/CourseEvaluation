@@ -1,20 +1,15 @@
 package cn.gaein.java.course_evaluation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.StreamSupport;
-
 import cn.gaein.java.course_evaluation.dto.QuestionDto;
-import cn.gaein.java.course_evaluation.entity.Evaluation;
 import cn.gaein.java.course_evaluation.entity.Question;
 import cn.gaein.java.course_evaluation.param.QuestionParam;
 import cn.gaein.java.course_evaluation.repository.EvaluationRepository;
 import cn.gaein.java.course_evaluation.repository.QuestionRepository;
 import cn.gaein.java.course_evaluation.responseHelper.Response;
-
-import org.apache.tomcat.util.http.fileupload.util.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/question")
@@ -37,8 +32,8 @@ public class QuestionController {
         var questions = repository.findAll();
 
         return Response.success(
-            StreamSupport.stream(questions.spliterator(), false)
-                .map(QuestionDto::new)
+                StreamSupport.stream(questions.spliterator(), false)
+                        .map(QuestionDto::new)
         );
     }
 
@@ -110,8 +105,8 @@ public class QuestionController {
         var questions = repository.findByEvaluationId(evaluationId);
 
         return Response.success(
-            StreamSupport.stream(questions.spliterator(), false)
-                .map(QuestionDto::new)
+                StreamSupport.stream(questions.spliterator(), false)
+                        .map(QuestionDto::new)
         );
     }
 }

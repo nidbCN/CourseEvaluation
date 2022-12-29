@@ -1,9 +1,8 @@
 package cn.gaein.java.course_evaluation.repository;
 
 import cn.gaein.java.course_evaluation.entity.Teacher;
-import org.springframework.stereotype.Repository;
-
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeacherRepository extends CrudRepository<Teacher, Long> {
